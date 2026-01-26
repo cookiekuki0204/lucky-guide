@@ -79,7 +79,11 @@ function App() {
         >
           개인정보처리방침
         </button>
-      </footer>
+      {/* 여기에 카피라이트를 추가합니다 */}
+      <p className="text-[10px] text-gray-300 mt-3 tracking-wider font-medium">
+      © 2026 LUCKY GUIDE. ALL RIGHTS RESERVED.
+     </p>
+     </footer>
     </div>
   );
 }
