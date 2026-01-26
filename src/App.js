@@ -35,7 +35,7 @@ function App() {
       {view === 'main' ? (
         <div className="w-full max-w-sm space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-black text-indigo-600 mb-3 tracking-tight">🍀 럭키 가이드</h1>
+            <h1 className="text-4xl font-black text-indigo-600 mb-3 tracking-tight">🍀 럭키가이드</h1>
             <p className="text-slate-400 font-medium text-sm">오늘 당신의 행운을 지금 확인하세요</p>
           </div>
           
