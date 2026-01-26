@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 
-// ⚠️ 발급받은 키를 여기에 꼭 넣어주세요!
 const KAKAO_KEY = "8ee405ddc4c4db04b8de8268a8317426"; 
 
 const Lotto = ({ onBack }) => {
@@ -29,7 +28,7 @@ const Lotto = ({ onBack }) => {
     }, 400);
   };
 
-  // ✅ 번호 텍스트 복사 기능 추가
+  // ✅ 번호 텍스트 복사 기능 추가 완료
   const copyNumbers = () => {
     const text = `🍀 럭키 가이드 행운 번호: ${numbers.join(', ')}`;
     navigator.clipboard.writeText(text).then(() => {
