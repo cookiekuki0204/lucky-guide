@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 
 // ⚠️ 발급받은 키를 여기에 꼭 넣어주세요!
-const KAKAO_KEY = "90e8f95a0e668a880b3efa8f8f639bc4"; 
+const KAKAO_KEY = "8ee405ddc4c4db04b8de8268a8317426"; 
 
 const Lotto = ({ onBack }) => {
   const [numbers, setNumbers] = useState([]);
