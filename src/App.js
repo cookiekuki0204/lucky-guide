@@ -7,6 +7,7 @@ function App() {
   const [isSpinning, setIsSpinning] = useState(false);
   const cardRef = useRef(null);
 
+  // 1. 행운 번호 생성 로직
   const generateNumbers = () => {
     setIsSpinning(true);
     setTimeout(() => {
@@ -20,6 +21,7 @@ function App() {
     }, 1000);
   };
 
+  // 2. 이미지 다운로드 기능
   const downloadImage = async () => {
     if (!cardRef.current) return;
     try {
@@ -31,6 +33,26 @@ function App() {
     } catch (err) { console.error('이미지 저장 실패:', err); }
   };
 
+  // 3. 카카오톡 공유 기능 (부활!)
+  const shareKakao = () => {
+    if (!window.Kakao) return;
+    const kakao = window.Kakao;
+    if (!kakao.isInitialized()) {
+      kakao.init('8ee405ddc4c4db04b8de8268a8317426'); // 발급받으신 실제 키를 꼭 넣어주세요!
+    }
+
+    kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: numbers.length > 0 ? `🍀 내 행운 번호: ${numbers.join(', ')}` : '🍀 오늘 내 운은 어떨까?',
+        description: '당신의 운을 믿고 행운을 잡아보세요!',
+        imageUrl: 'https://lucky-guide.pages.dev/og-image.png',
+        link: { mobileWebUrl: 'https://lucky-guide.pages.dev', webUrl: 'https://lucky-guide.pages.dev' },
+      },
+    });
+  };
+
+  // --- UI 스타일 ---
   const cardClass = "w-full max-w-[360px] p-8 bg-white rounded-[2.5rem] shadow-xl animate-in fade-in zoom-in-95 duration-500";
   const tabClass = (id) => `flex-1 py-4 text-sm font-black transition-all relative ${activeTab === id ? 'text-slate-900' : 'text-slate-400'}`;
 
@@ -70,10 +92,14 @@ function App() {
                 {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
               </button>
             </div>
+            {/* 번호 생성 후 나타나는 기능들 */}
             {numbers.length > 0 && (
-              <div className="flex justify-center gap-8 mt-10">
+              <div className="flex justify-center gap-6 mt-10">
                 <button onClick={downloadImage} className="flex flex-col items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-yellow-600 transition-colors">
                   <span className="text-xl">💾</span>이미지 저장
+                </button>
+                <button onClick={shareKakao} className="flex flex-col items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-yellow-600 transition-colors">
+                  <span className="text-xl">💬</span>카톡 공유
                 </button>
                 <button onClick={() => { navigator.clipboard.writeText(numbers.join(', ')); alert('복사되었습니다! 🍀'); }} className="flex flex-col items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-yellow-600 transition-colors">
                   <span className="text-xl">📋</span>번호 복사
@@ -83,21 +109,18 @@ function App() {
           </div>
         )}
 
+        {/* 해몽 및 가이드 탭은 데이터 충실히 유지 */}
         {activeTab === 'dream' && (
           <div className={cardClass}>
             <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"혹시 이런 꿈을?"</h2>
-            <div className="space-y-4">
-              <div className="bg-slate-50 p-5 rounded-3xl border-l-4 border-yellow-500 shadow-sm text-xs text-slate-600 leading-relaxed">
+            <div className="space-y-4 text-xs text-slate-600 leading-relaxed">
+              <div className="bg-slate-50 p-5 rounded-3xl border-l-4 border-yellow-500 shadow-sm">
                 <h3 className="font-black text-slate-900 mb-1">👴 조상님 꿈</h3>
-                <p>밝은 표정의 조상님은 당신에게 재물운이 강력하게 들어오고 있음을 알리는 최고의 길몽입니다.</p>
+                <p>밝게 웃는 조상님은 당신에게 재물운이 강력하게 들어오고 있음을 알리는 최고의 길몽입니다.</p>
               </div>
-              <div className="bg-slate-50 p-5 rounded-3xl border-l-4 border-yellow-500 shadow-sm text-xs text-slate-600 leading-relaxed">
+              <div className="bg-slate-50 p-5 rounded-3xl border-l-4 border-yellow-500 shadow-sm">
                 <h3 className="font-black text-slate-900 mb-1">💩 오물(똥) 꿈</h3>
-                <p>현실에선 불쾌할 수 있으나 꿈속에서 온몸이 흠뻑 젖는다면 큰 부를 얻게 될 징조입니다.</p>
-              </div>
-              <div className="bg-slate-50 p-5 rounded-3xl border-l-4 border-yellow-500 shadow-sm text-xs text-slate-600 leading-relaxed">
-                <h3 className="font-black text-slate-900 mb-1">🔥 불 꿈</h3>
-                <p>집이 활활 타오르는 강한 불길은 당신의 사업이나 운세가 걷잡을 수 없이 번창할 것을 의미합니다.</p>
+                <p>현실에선 불쾌할 수 있으나 꿈속에서 온몸이 흠뻑 젖는다면 큰 부를 얻게 될 강력한 징조입니다.</p>
               </div>
             </div>
           </div>
@@ -107,32 +130,30 @@ function App() {
           <div className={cardClass}>
             <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"12간지 행운 포인트"</h2>
             <div className="overflow-hidden rounded-3xl border border-slate-100 shadow-sm">
-              <table className="w-full text-[10px] text-center">
+              <table className="w-full text-[10px] text-center border-collapse">
                 <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-tighter">
                   <tr><th className="p-3">띠별 그룹</th><th className="p-3">숫자</th><th className="p-3">컬러</th></tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 text-slate-700">
-                  <tr><td className="p-3 font-bold">쥐 / 용 / 원숭이</td><td className="p-3">1, 6</td><td className="p-3 text-blue-500 font-black">BLUE</td></tr>
-                  <tr><td className="p-3 font-bold">소 / 뱀 / 닭</td><td className="p-3">2, 7</td><td className="p-3 text-red-500 font-black">RED</td></tr>
-                  <tr><td className="p-3 font-bold">범 / 말 / 개</td><td className="p-3">3, 8</td><td className="p-3 text-green-600 font-black">GREEN</td></tr>
-                  <tr><td className="p-3 font-bold">토끼 / 양 / 돼지</td><td className="p-3">4, 9</td><td className="p-3 text-slate-400 font-black">WHITE</td></tr>
+                <tbody className="divide-y divide-slate-50 text-slate-700 font-medium">
+                  <tr><td className="p-3">쥐/용/원숭이</td><td className="p-3">1, 6</td><td className="p-3 text-blue-500 font-black">BLUE</td></tr>
+                  <tr><td className="p-3">소/뱀/닭</td><td className="p-3">2, 7</td><td className="p-3 text-red-500 font-black">RED</td></tr>
+                  <tr><td className="p-3">범/말/개</td><td className="p-3">3, 8</td><td className="p-3 text-green-600 font-black">GREEN</td></tr>
+                  <tr><td className="p-3">토끼/양/돼지</td><td className="p-3">4, 9</td><td className="p-3 text-slate-400 font-black">WHITE</td></tr>
                 </tbody>
               </table>
             </div>
-            <p className="mt-6 text-[9px] text-slate-400 text-center leading-relaxed font-medium">
-              오늘 당신의 기운과 공명하는 컬러 아이템을 지녀보세요.<br/>긍정적인 에너지가 행운을 더 빨리 끌어당깁니다.
-            </p>
           </div>
         )}
       </main>
 
+      {/* 푸터 영역 보강 */}
       <footer className="w-full max-w-[360px] py-16 px-6 text-center">
         <div className="flex justify-center gap-4 mb-4 text-[10px] font-bold text-slate-400">
           <a href="/privacy" className="hover:text-yellow-600 underline decoration-slate-200 transition-colors">개인정보처리방침</a>
           <span>|</span>
           <span className="opacity-50">© 2026 LUCKY GUIDE</span>
         </div>
-        <p className="text-[9px] text-slate-300 font-medium tracking-widest uppercase">Premium Fortune Selection Service</p>
+        <p className="text-[9px] text-slate-300 font-medium tracking-widest uppercase italic">당신의 행운을 믿고 도전하세요</p>
       </footer>
     </div>
   );
