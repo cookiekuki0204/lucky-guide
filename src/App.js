@@ -1,96 +1,169 @@
-import React, { useState, useEffect } from 'react';
-import Privacy from './Privacy'; 
-import './index.css'; 
-import Lotto from './components/Lotto';
+import React, { useState } from 'react';
 
 function App() {
-  const [view, setView] = useState('main');
-  const [fortune, setFortune] = useState('');
+  const [activeTab, setActiveTab] = useState('lotto');
+  const [numbers, setNumbers] = useState([]);
+  const [isSpinning, setIsSpinning] = useState(false);
 
-  useEffect(() => {
-    const fortuneList = [
-      "오늘은 금전운이 북쪽에서 들어오는 날입니다.\n차분한 마음으로 번호를 고르세요.",
-      "밝은 노란색이 행운을 불러옵니다.\n주위의 밝은 기운을 모아 번호를 생성해보세요.",
-      "기다리던 소식이 들려올 수 있는 길조가 보입니다.\n직감을 믿고 번호를 선택하세요.",
-      "오늘은 인내심이 필요한 날입니다.\n서두르지 말고 천천히 행운을 기다려보세요.",
-      "주변 사람과의 화합이 행운의 열쇠입니다.\n함께 번호를 공유해보는 것도 좋습니다."
-    ];
-    const today = new Date().getDate();
-    setFortune(fortuneList[today % fortuneList.length]);
-  }, []);
+  // 1. 로또 번호 생성
+  const generateNumbers = () => {
+    setIsSpinning(true);
+    setTimeout(() => {
+      const newNumbers = [];
+      while (newNumbers.length < 6) {
+        const num = Math.floor(Math.random() * 45) + 1;
+        if (!newNumbers.includes(num)) newNumbers.push(num);
+      }
+      setNumbers(newNumbers.sort((a, b) => a - b));
+      setIsSpinning(false);
+    }, 1000);
+  };
 
-  if (view === 'privacy') {
-    return (
-      <div className="min-h-screen bg-slate-50 p-6 flex flex-col items-center font-sans">
-        <div className="w-full max-w-2xl">
-          <button onClick={() => setView('main')} className="mb-6 px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-xl text-slate-700 text-sm font-bold transition-all active:scale-95">← 돌아가기</button>
-          <div className="bg-white rounded-[2.5rem] shadow-xl p-8"><Privacy /></div>
-        </div>
-      </div>
-    );
-  }
+  // 2. 카카오톡 공유 (키값 입력 필요)
+  const shareKakao = () => {
+    if (!window.Kakao) return;
+    const kakao = window.Kakao;
+    if (!kakao.isInitialized()) kakao.init('YOUR_KAKAO_JS_KEY');
+
+    kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: numbers.length > 0 ? `🍀 내 행운 번호: ${numbers.join(', ')}` : '🍀 오늘 내 운은 어떨까?',
+        description: '당신의 운을 믿고 행운을 잡아보세요!',
+        imageUrl: 'https://lucky-guide.pages.dev/og-image.png',
+        link: { mobileWebUrl: 'https://lucky-guide.pages.dev', webUrl: 'https://lucky-guide.pages.dev' },
+      },
+    });
+  };
+
+  // --- 스타일 정의 ---
+  const cardClass = "w-full max-w-[360px] p-8 bg-white rounded-[2.5rem] shadow-xl animate-in fade-in duration-500";
+  
+  // 글리터 골드 버튼 스타일 (CSS Keyframes 포함)
+  const glitterButtonStyle = {
+    background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)',
+    backgroundSize: '400% 400%',
+    animation: isSpinning ? 'none' : 'glimmer 3s ease infinite',
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans text-slate-900 leading-relaxed">
-      {view === 'main' ? (
-        <div className="w-full max-w-sm space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-black text-indigo-600 mb-3 tracking-tight">🍀 럭키가이드</h1>
-            <p className="text-slate-400 font-medium text-sm">오늘 당신의 행운을 지금 확인하세요</p>
-          </div>
-          
-          {/* 운세 카드: 가독성 및 정렬 개선 */}
-          <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] shadow-2xl shadow-indigo-200 text-white text-center">
-            <h3 className="text-[10px] font-bold opacity-70 mb-4 uppercase tracking-[0.2em]">오늘의 사주 운세</h3>
-            <p className="text-lg font-bold leading-snug whitespace-pre-line break-keep">
-              "{fortune}"
-            </p>
-          </div>
-          
-          <button onClick={() => setView('lotto')} className="w-full bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-xl hover:-translate-y-1 transition-all group active:scale-95">
-            <div className="flex items-center gap-5 text-left">
-              <span className="text-4xl group-hover:rotate-12 transition-transform">🔮</span>
-              <div>
-                <h3 className="font-bold text-lg text-slate-800">로또 번호 추첨</h3>
-                <p className="text-slate-400 text-xs mt-0.5">사주 기운을 담은 6개 번호</p>
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center font-sans overflow-x-hidden">
+      {/* 글리터 효과를 위한 스타일 태그 */}
+      <style>{`
+        @keyframes glimmer {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+
+      {/* 헤더 */}
+      <header className="w-full max-w-[360px] pt-12 pb-8 px-6">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">LUCKY GUIDE</h1>
+        <div className="w-12 h-1 bg-yellow-500 mt-2 rounded-full"></div>
+      </header>
+
+      {/* 메인 콘텐츠 */}
+      <main className="w-full flex flex-col items-center px-6 pb-32">
+        {activeTab === 'lotto' && (
+          <div className={cardClass}>
+            <div className="text-center mb-8">
+              <span className="text-4xl mb-2 block">✨</span>
+              <h2 className="text-xl font-black text-slate-800">당신의 운을 믿으세요</h2>
+              <p className="text-slate-400 text-xs mt-1">오늘 당신에게 찾아온 행운의 번호</p>
+            </div>
+            
+            <div className="flex justify-center gap-2 mb-10 h-10 items-center">
+              {numbers.length > 0 ? numbers.map((num, i) => (
+                <div key={i} className="w-10 h-10 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-sm shadow-lg transform scale-110">
+                  {num}
+                </div>
+              )) : (
+                <div className="text-slate-300 text-sm font-medium">행운을 불러오는 중...</div>
+              )}
+            </div>
+
+            <button 
+              onClick={generateNumbers}
+              disabled={isSpinning}
+              style={glitterButtonStyle}
+              className={`w-full py-4 rounded-2xl font-black text-slate-900 transition-all active:scale-95 shadow-lg shadow-yellow-200/50 ${isSpinning ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
+            </button>
+
+            {numbers.length > 0 && (
+              <div className="flex justify-center gap-4 mt-8">
+                <button onClick={shareKakao} className="text-xs font-bold text-slate-400 hover:text-yellow-600">💬 카톡 공유</button>
+                <button onClick={() => {
+                  navigator.clipboard.writeText(numbers.join(', '));
+                  alert('행운이 복사되었습니다!');
+                }} className="text-xs font-bold text-slate-400 hover:text-yellow-600">📋 번호 복사</button>
               </div>
-            </div>
-            <span className="text-slate-300 font-bold ml-2">→</span>
-          </button>
-
-          {/* 정보성 텍스트 보강 */}
-          <div className="px-6 py-5 bg-slate-100/80 rounded-[1.5rem] border border-slate-200/50">
-            <p className="text-[11px] font-bold mb-2 text-slate-500 flex items-center gap-1.5">
-              <span className="text-sm">💡</span> 행운 가이드
-            </p>
-            <p className="text-[11px] text-slate-500 leading-relaxed break-keep opacity-80">
-              럭키 가이드는 단순 무작위가 아닌 고유 알고리즘과 사주 기운을 결합해 번호를 제안합니다. 매일 오전 9시, 새로운 기운으로 번호를 생성해 보세요.
-            </p>
+            )}
           </div>
+        )}
 
-          <div className="flex gap-3">
-            <div className="flex-1 bg-white/40 p-4 rounded-[1.2rem] border border-slate-200/50 text-center">
-              <p className="text-[10px] font-bold text-slate-400">AI 관상 <span className="text-[8px] block opacity-50 uppercase">Coming Soon</span></p>
-            </div>
-            <div className="flex-1 bg-white/40 p-4 rounded-[1.2rem] border border-slate-200/50 text-center">
-              <p className="text-[10px] font-bold text-slate-400">AI 손금 <span className="text-[8px] block opacity-50 uppercase">Coming Soon</span></p>
+        {activeTab === 'dream' && (
+          <div className={cardClass}>
+            <h2 className="text-2xl font-black text-slate-800 mb-6">🌙 혹시 이런 꿈 꾸셨나요?</h2>
+            <div className="space-y-6 text-sm text-slate-600 leading-relaxed">
+              <section className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500">
+                <h3 className="font-bold text-slate-800 mb-1">👴 조상님 꿈</h3>
+                <p className="text-xs">조상님이 밝게 웃으며 무언가를 주셨다면 오늘이 바로 그날입니다.</p>
+              </section>
+              <section className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500">
+                <h3 className="font-bold text-slate-800 mb-1">💩 오물(똥) 꿈</h3>
+                <p className="text-xs">불쾌함은 잠시! 온몸에 젖는 꿈은 강력한 재물을 뜻하는 대박 징조입니다.</p>
+              </section>
+              <section className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500">
+                <h3 className="font-bold text-slate-800 mb-1">🔥 불이 나는 꿈</h3>
+                <p className="text-xs">활활 타오르는 불꽃은 당신의 운세가 크게 번창할 것임을 상징합니다.</p>
+              </section>
             </div>
           </div>
-        </div>
-      ) : (
-        <Lotto onBack={() => setView('main')} />
-      )}
+        )}
 
-      {/* 광고 영역 */}
-      <div className="mt-12 w-full max-w-sm px-2">
-        <div className="bg-white/50 border-2 border-dashed border-slate-200 rounded-[1.5rem] py-8 text-center text-slate-300 font-bold text-[9px] tracking-[0.2em] uppercase">
-          AD : Google AdSense
-        </div>
-      </div>
+        {activeTab === 'guide' && (
+          <div className={cardClass}>
+            <h2 className="text-2xl font-black text-slate-800 mb-6">📅 띠별 행운 포인트</h2>
+            <div className="overflow-hidden rounded-2xl border border-slate-100 mb-6">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-slate-50 text-slate-500 font-bold">
+                  <tr><th className="p-3">띠</th><th className="p-3">숫자</th><th className="p-3">컬러</th></tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 text-slate-600">
+                  <tr><td className="p-3 font-bold">쥐/용/원숭이</td><td className="p-3">1, 6</td><td className="p-3 font-medium text-blue-500">블루</td></tr>
+                  <tr><td className="p-3 font-bold">소/뱀/닭</td><td className="p-3">2, 7</td><td className="p-3 font-medium text-red-500">레드</td></tr>
+                  <tr><td className="p-3 font-bold">호랑이/말/개</td><td className="p-3">3, 8</td><td className="p-3 font-medium text-green-500">그린</td></tr>
+                  <tr><td className="p-3 font-bold">토끼/양/돼지</td><td className="p-3">4, 9</td><td className="p-3 font-medium text-slate-400">화이트</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[10px] text-slate-400 text-center leading-relaxed font-medium">당신의 띠와 맞는 컬러 아이템을 챙겨보세요.<br/>긍정적인 기운이 행운을 끌어당깁니다.</p>
+          </div>
+        )}
+      </main>
 
-      <footer className='mt-12 mb-6 text-center space-y-4'>
-        <button onClick={() => setView('privacy')} className='text-[10px] text-slate-400 underline hover:text-indigo-500 transition-colors font-medium'>개인정보처리방침</button>
-        <p className="text-[9px] text-slate-300 tracking-[0.15em] font-semibold uppercase">© 2026 LUCKY GUIDE. ALL RIGHTS RESERVED.</p>
+      {/* 하단 네비게이션 */}
+      <nav className="fixed bottom-8 z-50 bg-slate-900/95 backdrop-blur-xl px-8 py-4 rounded-full shadow-2xl flex gap-10 border border-white/10">
+        <button onClick={() => setActiveTab('lotto')} className={`flex flex-col items-center transition-all ${activeTab === 'lotto' ? 'scale-110' : 'opacity-30'}`}>
+          <span className="text-xl">🍀</span>
+          <span className="text-[10px] text-white font-bold mt-1">추첨</span>
+        </button>
+        <button onClick={() => setActiveTab('dream')} className={`flex flex-col items-center transition-all ${activeTab === 'dream' ? 'scale-110' : 'opacity-30'}`}>
+          <span className="text-xl">🌙</span>
+          <span className="text-[10px] text-white font-bold mt-1">해몽</span>
+        </button>
+        <button onClick={() => setActiveTab('guide')} className={`flex flex-col items-center transition-all ${activeTab === 'guide' ? 'scale-110' : 'opacity-30'}`}>
+          <span className="text-xl">📅</span>
+          <span className="text-[10px] text-white font-bold mt-1">포인트</span>
+        </button>
+      </nav>
+
+      <footer className="w-full max-w-[360px] py-10 px-6 text-center">
+        <p className="text-[10px] text-slate-300 font-bold tracking-widest uppercase">Premium Fortune Guide</p>
+        <p className="text-[10px] text-slate-300 mt-1">© 2026 LUCKY GUIDE. ALL RIGHTS RESERVED.</p>
       </footer>
     </div>
   );
