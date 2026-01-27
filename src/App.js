@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react'; // useEffect 삭제됨
 import html2canvas from 'html2canvas';
 
 function App() {
@@ -6,13 +6,11 @@ function App() {
   const [numbers, setNumbers] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); // 다크모드 상태
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const cardRef = useRef(null);
 
-  // 다크모드 토글 함수
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  // 기능 로직
   const generateNumbers = () => {
     setIsSpinning(true);
     setTimeout(() => {
@@ -55,10 +53,10 @@ function App() {
     });
   };
 
-  // 스타일 정의 (다크모드 대응)
   const bgClass = isDarkMode ? "bg-slate-900 text-slate-100" : "bg-[#f8fafc] text-slate-800";
   const headerClass = isDarkMode ? "bg-slate-900/80 border-slate-800" : "bg-white/80 border-slate-100";
   const cardContentClass = isDarkMode ? "bg-slate-800 text-slate-100" : "bg-white text-slate-800";
+  
   const tabClass = (id) => `
     flex-none md:flex-1 px-5 md:px-2 py-4 text-[11px] md:text-[13px] font-black transition-all relative whitespace-nowrap text-center
     ${activeTab === id ? (isDarkMode ? 'text-yellow-400' : 'text-slate-900') : (isDarkMode ? 'text-slate-500' : 'text-slate-400')}
@@ -72,19 +70,13 @@ function App() {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      {/* 헤더 & 우상단 다크모드 버튼 */}
       <header className={`w-full max-w-[400px] md:max-w-[700px] sticky top-0 z-40 ${isDarkMode ? 'bg-slate-900' : 'bg-[#f8fafc]'}`}>
         <div className="relative pt-12 pb-4 text-center">
           <h1 className={`text-2xl md:text-3xl font-black tracking-tight italic ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>LUCKY GUIDE</h1>
-          {/* 다크모드 토글 버튼 */}
-          <button 
-            onClick={toggleDarkMode}
-            className="absolute right-4 top-12 p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:scale-110 transition-transform"
-          >
+          <button onClick={toggleDarkMode} className="absolute right-4 top-12 p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:scale-110 transition-transform">
             {isDarkMode ? '☀️' : '🌙'}
           </button>
         </div>
-        
         <nav className={`flex backdrop-blur-md border-b overflow-x-auto md:overflow-x-visible no-scrollbar touch-pan-x ${headerClass}`}>
           <div className="flex min-w-full md:min-w-0 md:w-full items-center justify-start md:justify-center px-2">
             <button onClick={() => setActiveTab('lotto')} className={tabClass('lotto')}>로또번호추첨기{activeTab === 'lotto' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
@@ -98,7 +90,6 @@ function App() {
       </header>
 
       <main className="w-full flex flex-col items-center px-6 py-12 pb-32">
-        {/* 콘텐츠 영역 (카드 배경색 다크모드 적용) */}
         <div ref={cardRef} className={`w-full max-w-[360px] p-8 rounded-[2.5rem] shadow-xl animate-in fade-in zoom-in-95 duration-500 ${cardContentClass}`}>
           {activeTab === 'lotto' && (
             <div className="flex flex-col items-center w-full">
@@ -119,15 +110,13 @@ function App() {
               </button>
             </div>
           )}
-
           {activeTab === 'saju' && <div className="text-center py-10"><span className="text-5xl mb-6 block">🎎</span><h2 className="text-xl font-black mb-2 italic">타고난 운명, 사주풀이</h2><p className="text-slate-400 text-xs mb-8">Coming Soon</p></div>}
-          {activeTab === 'face' && <div className="text-center py-10"><span className="text-5xl mb-6 block">🎭</span><h2 className="text-xl font-black mb-2 italic">재벌이 될 상인가?</h2><p className="text-slate-400 text-xs mb-8">Coming Soon</p></div>}
+          {activeTab === 'face' && <div className="text-center py-10"><span className="text-5xl mb-6 block">🎭</span><h2 className="text-xl font-black mb-2 italic">"재벌이 될 상인가?"</h2><p className="text-slate-400 text-xs mb-8">Coming Soon</p></div>}
           {activeTab === 'palm' && <div className="text-center py-10"><span className="text-5xl mb-6 block">✋</span><h2 className="text-xl font-black mb-2 italic">손바닥 보물지도</h2><p className="text-slate-400 text-xs mb-8">Coming Soon</p></div>}
-          
           {activeTab === 'dream' && (
             <div>
               <h2 className="text-xl font-black mb-8 text-center italic">로또 당첨 길몽 10선</h2>
-              <div className="space-y-4 text-[11px] max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar font-medium">
+              <div className="space-y-4 text-[11px] max-h-[40vh] overflow-y-auto pr-2 font-medium">
                 {[{t: "연예인 방문", d: "귀인을 만날 징조"}, {t: "대통령과 악수", d: "명예와 횡재수"}, {t: "조상님의 미소", d: "집안의 경사"}].map((item, i) => (
                   <div key={i} className={`p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm ${isDarkMode ? 'bg-slate-700 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
                     <h3 className={`font-black mb-1 italic ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{i+1}. {item.t}</h3><p>{item.d}</p>
@@ -136,7 +125,6 @@ function App() {
               </div>
             </div>
           )}
-
           {activeTab === 'guide' && (
             <div>
               <h2 className="text-xl font-black mb-8 text-center italic">12간지 행운 포인트</h2>
@@ -152,8 +140,6 @@ function App() {
             </div>
           )}
         </div>
-
-        {/* 하단 버튼들 (카드 밖으로 배치) */}
         {activeTab === 'lotto' && numbers.length > 0 && (
           <div className="flex justify-center gap-6 mt-10">
             <button onClick={downloadImage} className="flex flex-col items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-yellow-600"><span className="text-xl">💾</span>이미지 저장</button>
@@ -163,7 +149,6 @@ function App() {
         )}
       </main>
 
-      {/* 푸터 */}
       <footer className={`w-full max-w-[360px] py-16 px-6 text-center border-t mt-auto ${isDarkMode ? 'border-slate-800' : 'border-slate-50'}`}>
         <div className="flex justify-center gap-4 mb-4 text-[10px] font-bold text-slate-400">
           <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-yellow-600 underline decoration-slate-200 italic">개인정보처리방침</button>
@@ -172,10 +157,9 @@ function App() {
         </div>
       </footer>
 
-      {/* 개인정보 모달 (다크모드 적용) */}
       {isPrivacyOpen && (
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-6" onClick={() => setIsPrivacyOpen(false)}>
-          <div className={`${isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-white text-slate-500'} w-full max-w-[320px] max-h-[70vh] overflow-y-auto rounded-[2rem] p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-300 text-left`} onClick={(e) => e.stopPropagation()}>
+          <div className={`${isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-white text-slate-500'} w-full max-w-[320px] max-h-[70vh] overflow-y-auto rounded-[2rem] p-8 shadow-2xl text-left`} onClick={(e) => e.stopPropagation()}>
             <h3 className={`text-lg font-black mb-6 italic border-b pb-2 ${isDarkMode ? 'text-white border-slate-700' : 'text-slate-900 border-slate-100'}`}>개인정보처리방침</h3>
             <div className="text-[11px] leading-relaxed space-y-5 font-medium">
               <section><p className={`font-bold mb-1 italic ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>1. 개인정보 수집 미실시</p><p>본 서비스는 개인정보를 서버에 저장하지 않습니다.</p></section>
