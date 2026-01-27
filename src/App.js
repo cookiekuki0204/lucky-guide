@@ -112,7 +112,7 @@ function App() {
           <div className={cardClass}>
             <div className="text-center py-10">
               <span className="text-5xl mb-6 block">🎭</span>
-              <h2 className="text-xl font-black text-slate-800 mb-2 italic">"재벌이 될 상인가?"</h2>
+              <h2 className="text-xl font-black text-slate-800 mb-2 italic">재벌이 될 상인가?</h2>
               <p className="text-slate-400 text-xs mb-8">AI가 분석하는 당신의 숨겨진 재물복</p>
               <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 italic text-[11px] text-slate-500 leading-relaxed font-medium">
                 "눈은 정신이 머무는 곳이요, 코는 재물 창고라 하였습니다."<br/><br/>
@@ -127,7 +127,7 @@ function App() {
           <div className={cardClass}>
             <div className="text-center py-10">
               <span className="text-5xl mb-6 block">✋</span>
-              <h2 className="text-xl font-black text-slate-800 mb-2 italic">"손바닥의 보물지도"</h2>
+              <h2 className="text-xl font-black text-slate-800 mb-2 italic">손바닥의 보물지도</h2>
               <p className="text-slate-400 text-xs mb-8">손바닥에 그려진 당첨의 기운을 찾아서</p>
               <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 italic text-[11px] text-slate-500 leading-relaxed font-medium">
                 "생명선은 길고 재물선은 뚜렷하니 대박의 징조로다."<br/><br/>
@@ -141,7 +141,7 @@ function App() {
         {/* 대박꿈해몽 10선 */}
         {activeTab === 'dream' && (
           <div className={cardClass}>
-            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"로또 당첨 길몽 10선"</h2>
+            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">로또 당첨 길몽 10선</h2>
             <div className="space-y-4 text-[11px] text-slate-600 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar font-medium">
               {[
                 {t: "연예인이 집에 온 꿈", d: "귀인을 만나 재물운이 크게 상승할 징조입니다."},
@@ -167,7 +167,7 @@ function App() {
         {/* 띠별운세 (12간지) */}
         {activeTab === 'guide' && (
           <div className={cardClass}>
-            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"12간지 행운 포인트"</h2>
+            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">12간지 행운 포인트</h2>
             <div className="overflow-hidden rounded-3xl border border-slate-100 shadow-sm">
               <table className="w-full text-[10px] text-center border-collapse font-medium">
                 <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-tighter">
