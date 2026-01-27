@@ -155,14 +155,19 @@ function App() {
         {/* 꿈해몽 & 띠별운세 (기존 데이터 완벽 유지) */}
         {activeTab === 'dream' && (
           <div className={cardClass}>
-            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"로또 당첨 길몽 10선"</h2>
+            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">로또 당첨 길몽 10선</h2>
             <div className="space-y-4 text-[11px] text-slate-600 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar font-medium">
               {[
                 {t: "연예인이 집에 온 꿈", d: "귀인을 만나 재물운이 상승할 징조입니다."},
                 {t: "대통령과 악수", d: "명예와 횡재수가 따르는 최고 길몽입니다."},
                 {t: "조상님의 밝은 미소", d: "부를 얻게 될 조상님의 선물입니다."},
                 {t: "똥에 흠뻑 젖는 꿈", d: "막대한 재물이 굴러오는 전형적인 당첨 꿈입니다."},
-                {t: "집이 활활 타는 꿈", d: "사업이나 재산이 급격히 번창할 예시입니다."}
+                {t: "집이 활활 타는 꿈", d: "사업이나 재산이 급격히 번창할 예시입니다."},
+                {t: "맑은 물이 차오름", d: "집안에 부귀영화가 가득할 징조입니다."},
+                {t: "돼지 떼 발견", d: "횡재수가 넝쿨째 들어오는 풍요의 상징입니다."},
+                {t: "피가 솟구침", d: "꿈에서 피는 돈을 뜻하며 횡재수가 매우 큽니다."},
+                {t: "용의 승천", d: "인생 최고의 부귀 기회가 찾아왔음을 암시합니다."},
+                {t: "돈다발 선물", d: "실제 횡재 가능성이 매우 높은 직관적인 길몽입니다."}
               ].map((item, i) => (
                 <div key={i} className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1 italic">{i+1}. {item.t}</h3><p>{item.d}</p></div>
               ))}
