@@ -111,7 +111,7 @@ function App() {
           <div className={cardClass}>
             <div className="text-center py-10">
               <span className="text-5xl mb-6 block">🎎</span>
-              <h2 className="text-xl font-black text-slate-800 mb-2 italic">"타고난 운명, 사주풀이"</h2>
+              <h2 className="text-xl font-black text-slate-800 mb-2 italic">타고난 운명, 사주풀이</h2>
               <p className="text-slate-400 text-xs mb-8">당신이 태어난 순간에 정해진 행운</p>
               <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 italic text-[11px] text-slate-500 leading-relaxed font-medium">
                 "사주팔자는 인생의 설계도와 같습니다."<br/><br/>
