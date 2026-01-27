@@ -8,7 +8,7 @@ function App() {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const cardRef = useRef(null);
 
-  // 기능 로직 (번호 생성, 이미지 저장, 카카오 공유 유지)
+  // 기능 로직
   const generateNumbers = () => {
     setIsSpinning(true);
     setTimeout(() => {
@@ -49,7 +49,12 @@ function App() {
   };
 
   const cardClass = "w-full max-w-[360px] p-8 bg-white rounded-[2.5rem] shadow-xl animate-in fade-in zoom-in-95 duration-500";
-  const tabClass = (id) => `flex-none px-5 py-4 text-[11px] font-black transition-all relative whitespace-nowrap ${activeTab === id ? 'text-slate-900' : 'text-slate-400'}`;
+  
+  // [반응형 핵심] 탭 클래스: 모바일은 고정너비 없이 흐르고, 웹(md)에서는 균등 배분 및 폰트 확대
+  const tabClass = (id) => `
+    flex-none md:flex-1 px-5 md:px-2 py-4 text-[11px] md:text-[13px] font-black transition-all relative whitespace-nowrap text-center
+    ${activeTab === id ? 'text-slate-900' : 'text-slate-400'}
+  `;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center font-sans overflow-x-hidden relative text-slate-800">
@@ -59,13 +64,15 @@ function App() {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      {/* 헤더 & 네비게이션 (6개 탭 확장) */}
-      <header className="w-full max-w-[400px] bg-[#f8fafc] sticky top-0 z-40">
+      {/* 헤더 & [반응형 네비게이션] */}
+      <header className="w-full max-w-[400px] md:max-w-[700px] bg-[#f8fafc] sticky top-0 z-40">
         <div className="pt-12 pb-4 text-center">
-          <h1 className="text-2xl font-black tracking-tight italic">LUCKY GUIDE</h1>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight italic">LUCKY GUIDE</h1>
         </div>
-        <nav className="flex bg-white/80 backdrop-blur-md border-b border-slate-100 overflow-x-auto no-scrollbar touch-pan-x px-2">
-          <div className="flex min-w-full items-center">
+        
+        {/* 네비게이션 바: 모바일(스크롤 가능), 웹(중앙 정렬 및 전체 노출) */}
+        <nav className="flex bg-white/80 backdrop-blur-md border-b border-slate-100 overflow-x-auto md:overflow-x-visible no-scrollbar touch-pan-x">
+          <div className="flex min-w-full md:min-w-0 md:w-full items-center justify-start md:justify-center px-2">
             <button onClick={() => setActiveTab('lotto')} className={tabClass('lotto')}>로또번호추첨기{activeTab === 'lotto' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
             <button onClick={() => setActiveTab('saju')} className={tabClass('saju')}>AI사주{activeTab === 'saju' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
             <button onClick={() => setActiveTab('face')} className={tabClass('face')}>AI관상{activeTab === 'face' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
@@ -88,7 +95,7 @@ function App() {
               <div className="flex justify-center gap-2 mb-12 h-10 items-center">
                 {numbers.length > 0 ? numbers.map((num, i) => (
                   <div key={i} className="w-10 h-10 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-sm shadow-lg border border-yellow-500/30">{num}</div>
-                )) : <div className="text-slate-200 text-sm font-bold tracking-widest uppercase italic">Ready to Luck</div>}
+                )) : <div className="text-slate-200 text-sm font-bold tracking-widest uppercase italic tracking-widest">Ready to Luck</div>}
               </div>
               <button onClick={generateNumbers} disabled={isSpinning}
                 style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite' }}
@@ -106,13 +113,12 @@ function App() {
           </div>
         )}
 
-        {/* AI 사주 커밍순 */}
         {activeTab === 'saju' && (
           <div className={cardClass}>
             <div className="text-center py-10">
               <span className="text-5xl mb-6 block">🎎</span>
               <h2 className="text-xl font-black text-slate-800 mb-2 italic">타고난 운명, 사주풀이</h2>
-              <p className="text-slate-400 text-xs mb-8">당신이 태어난 순간에 정해진 행운</p>
+              <p className="text-slate-400 text-xs mb-8 font-medium">당신이 태어난 순간에 정해진 행운</p>
               <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 italic text-[11px] text-slate-500 leading-relaxed font-medium">
                 "사주팔자는 인생의 설계도와 같습니다."<br/><br/>
                 생년월일시 데이터를 바탕으로 AI가<br/>
@@ -123,13 +129,12 @@ function App() {
           </div>
         )}
 
-        {/* AI 관상 & 손금 (기존 데이터 유지) */}
         {activeTab === 'face' && (
           <div className={cardClass}>
             <div className="text-center py-10">
               <span className="text-5xl mb-6 block">🎭</span>
-              <h2 className="text-xl font-black text-slate-800 mb-2 italic">"재벌이 될 상인가?"</h2>
-              <p className="text-slate-400 text-xs mb-8">AI 얼굴 인식으로 찾는 재물복</p>
+              <h2 className="text-xl font-black text-slate-800 mb-2 italic">재벌이 될 상인가?</h2>
+              <p className="text-slate-400 text-xs mb-8 font-medium">AI 얼굴 인식으로 찾는 재물복</p>
               <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 italic text-[11px] text-slate-500 leading-relaxed font-medium">
                 "코는 재물 창고라 하였습니다." 최신 인식 기술로 당신의 성공운을 분석해 드립니다.
               </div>
@@ -142,8 +147,8 @@ function App() {
           <div className={cardClass}>
             <div className="text-center py-10">
               <span className="text-5xl mb-6 block">✋</span>
-              <h2 className="text-xl font-black text-slate-800 mb-2 italic">"손바닥 보물지도"</h2>
-              <p className="text-slate-400 text-xs mb-8">손금에 숨겨진 당첨 기운</p>
+              <h2 className="text-xl font-black text-slate-800 mb-2 italic">손바닥 보물지도</h2>
+              <p className="text-slate-400 text-xs mb-8 font-medium">손금에 숨겨진 당첨 기운</p>
               <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 italic text-[11px] text-slate-500 leading-relaxed font-medium">
                 "재물선이 뚜렷하니 대박의 징조로다." 손금 데이터를 AI로 정밀하게 추출합니다.
               </div>
@@ -152,7 +157,6 @@ function App() {
           </div>
         )}
 
-        {/* 꿈해몽 & 띠별운세 (기존 데이터 완벽 유지) */}
         {activeTab === 'dream' && (
           <div className={cardClass}>
             <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">로또 당첨 길몽 10선</h2>
@@ -196,10 +200,9 @@ function App() {
         )}
       </main>
 
-      {/* 푸터 & 개인정보처리방침 (3대 항목 완벽 유지) */}
       <footer className="w-full max-w-[360px] py-16 px-6 text-center border-t border-slate-50 mt-auto">
         <div className="flex justify-center gap-4 mb-4 text-[10px] font-bold text-slate-400">
-          <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-yellow-600 underline decoration-slate-200 transition-colors">개인정보처리방침</button>
+          <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-yellow-600 underline decoration-slate-200 transition-colors italic">개인정보처리방침</button>
           <span>|</span>
           <span className="opacity-50">© 2026 LUCKY GUIDE</span>
         </div>
@@ -208,13 +211,13 @@ function App() {
       {isPrivacyOpen && (
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-6" onClick={() => setIsPrivacyOpen(false)}>
           <div className="bg-white w-full max-w-[320px] max-h-[70vh] overflow-y-auto rounded-[2rem] p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-300 text-left" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-black text-slate-900 mb-6 italic border-b pb-2 tracking-tight">개인정보처리방침</h3>
+            <h3 className="text-lg font-black text-slate-900 mb-6 italic border-b pb-2 tracking-tight font-black">개인정보처리방침</h3>
             <div className="text-[11px] text-slate-500 leading-relaxed space-y-5 font-medium">
               <section><p className="text-slate-900 font-bold mb-1 italic">1. 개인정보 수집 미실시</p><p>본 서비스는 사용자의 어떠한 개인정보도 서버에 전송하거나 저장하지 않습니다.</p></section>
               <section><p className="text-slate-900 font-bold mb-1 italic">2. 구글 애드센스 정책</p><p>광고 게재를 위해 구글은 쿠키 정보를 분석에 활용할 수 있습니다.</p></section>
               <section><p className="text-slate-900 font-bold mb-1 italic">3. 서비스 보안 로직</p><p>모든 데이터 처리는 사용자의 기기 로컬 환경에서 즉석 실행됩니다.</p></section>
             </div>
-            <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-10 py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs">확인 완료</button>
+            <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-10 py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs active:scale-95 transition-all">확인 완료</button>
           </div>
         </div>
       )}
