@@ -19,7 +19,7 @@ function App() {
     }, 1000);
   };
 
-  // 2. 카카오톡 공유 (키값 입력 필요)
+  // 2. 카카오톡 공유
   const shareKakao = () => {
     if (!window.Kakao) return;
     const kakao = window.Kakao;
@@ -36,10 +36,9 @@ function App() {
     });
   };
 
-  // --- 스타일 정의 ---
+  // 스타일 정의
   const cardClass = "w-full max-w-[360px] p-8 bg-white rounded-[2.5rem] shadow-xl animate-in fade-in duration-500";
   
-  // 글리터 골드 버튼 스타일 (CSS Keyframes 포함)
   const glitterButtonStyle = {
     background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)',
     backgroundSize: '400% 400%',
@@ -48,7 +47,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center font-sans overflow-x-hidden">
-      {/* 글리터 효과를 위한 스타일 태그 */}
       <style>{`
         @keyframes glimmer {
           0% { background-position: 0% 50%; }
@@ -64,7 +62,7 @@ function App() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <main className="w-full flex flex-col items-center px-6 pb-32">
+      <main className="w-full flex flex-col items-center px-6 pb-40">
         {activeTab === 'lotto' && (
           <div className={cardClass}>
             <div className="text-center mb-8">
@@ -87,7 +85,7 @@ function App() {
               onClick={generateNumbers}
               disabled={isSpinning}
               style={glitterButtonStyle}
-              className={`w-full py-4 rounded-2xl font-black text-slate-900 transition-all active:scale-95 shadow-lg shadow-yellow-200/50 ${isSpinning ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full py-4 rounded-2xl font-black text-slate-900 transition-all active:scale-95 shadow-lg shadow-yellow-200/50 ${isSpinning ? 'opacity-50' : ''}`}
             >
               {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
             </button>
@@ -106,19 +104,19 @@ function App() {
 
         {activeTab === 'dream' && (
           <div className={cardClass}>
-            <h2 className="text-2xl font-black text-slate-800 mb-6">🌙 혹시 이런 꿈 꾸셨나요?</h2>
-            <div className="space-y-6 text-sm text-slate-600 leading-relaxed">
+            <h2 className="text-2xl font-black text-slate-800 mb-6 text-center">🌙 꿈해몽 대박 징조</h2>
+            <div className="space-y-4 text-sm text-slate-600">
               <section className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500">
-                <h3 className="font-bold text-slate-800 mb-1">👴 조상님 꿈</h3>
-                <p className="text-xs">조상님이 밝게 웃으며 무언가를 주셨다면 오늘이 바로 그날입니다.</p>
+                <h3 className="font-bold text-slate-800 mb-1 italic text-center">"조상님 꿈"</h3>
+                <p className="text-xs leading-relaxed">조상님이 밝게 웃으시는 모습은 아주 강한 재물운을 상징합니다.</p>
               </section>
               <section className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500">
-                <h3 className="font-bold text-slate-800 mb-1">💩 오물(똥) 꿈</h3>
-                <p className="text-xs">불쾌함은 잠시! 온몸에 젖는 꿈은 강력한 재물을 뜻하는 대박 징조입니다.</p>
+                <h3 className="font-bold text-slate-800 mb-1 italic text-center">"오물(똥) 꿈"</h3>
+                <p className="text-xs leading-relaxed">현실에선 싫지만, 꿈에서 온몸이 젖는다면 대박이 터질 징조입니다.</p>
               </section>
               <section className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500">
-                <h3 className="font-bold text-slate-800 mb-1">🔥 불이 나는 꿈</h3>
-                <p className="text-xs">활활 타오르는 불꽃은 당신의 운세가 크게 번창할 것임을 상징합니다.</p>
+                <h3 className="font-bold text-slate-800 mb-1 italic text-center">"불이 나는 꿈"</h3>
+                <p className="text-xs leading-relaxed">집이 활활 타오르는 강한 불길은 재산이 급격히 늘어날 기운입니다.</p>
               </section>
             </div>
           </div>
@@ -126,13 +124,13 @@ function App() {
 
         {activeTab === 'guide' && (
           <div className={cardClass}>
-            <h2 className="text-2xl font-black text-slate-800 mb-6">📅 띠별 행운 포인트</h2>
+            <h2 className="text-2xl font-black text-slate-800 mb-6 text-center">📅 띠별 행운 포인트</h2>
             <div className="overflow-hidden rounded-2xl border border-slate-100 mb-6">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-50 text-slate-500 font-bold">
+                <thead className="bg-slate-50 text-slate-500 font-bold text-center">
                   <tr><th className="p-3">띠</th><th className="p-3">숫자</th><th className="p-3">컬러</th></tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 text-slate-600">
+                <tbody className="divide-y divide-slate-50 text-slate-600 text-center">
                   <tr><td className="p-3 font-bold">쥐/용/원숭이</td><td className="p-3">1, 6</td><td className="p-3 font-medium text-blue-500">블루</td></tr>
                   <tr><td className="p-3 font-bold">소/뱀/닭</td><td className="p-3">2, 7</td><td className="p-3 font-medium text-red-500">레드</td></tr>
                   <tr><td className="p-3 font-bold">호랑이/말/개</td><td className="p-3">3, 8</td><td className="p-3 font-medium text-green-500">그린</td></tr>
@@ -140,13 +138,13 @@ function App() {
                 </tbody>
               </table>
             </div>
-            <p className="text-[10px] text-slate-400 text-center leading-relaxed font-medium">당신의 띠와 맞는 컬러 아이템을 챙겨보세요.<br/>긍정적인 기운이 행운을 끌어당깁니다.</p>
+            <p className="text-[10px] text-slate-400 text-center leading-relaxed font-medium italic">"나와 맞는 행운의 아이템을 지녀보세요."</p>
           </div>
         )}
       </main>
 
-      {/* 하단 네비게이션 */}
-      <nav className="fixed bottom-8 z-50 bg-slate-900/95 backdrop-blur-xl px-8 py-4 rounded-full shadow-2xl flex gap-10 border border-white/10">
+      {/* 하단 네비게이션 (위치 조정: bottom-12) */}
+      <nav className="fixed bottom-12 z-50 bg-slate-900/95 backdrop-blur-xl px-10 py-5 rounded-full shadow-2xl flex gap-10 border border-white/10">
         <button onClick={() => setActiveTab('lotto')} className={`flex flex-col items-center transition-all ${activeTab === 'lotto' ? 'scale-110' : 'opacity-30'}`}>
           <span className="text-xl">🍀</span>
           <span className="text-[10px] text-white font-bold mt-1">추첨</span>
@@ -157,7 +155,7 @@ function App() {
         </button>
         <button onClick={() => setActiveTab('guide')} className={`flex flex-col items-center transition-all ${activeTab === 'guide' ? 'scale-110' : 'opacity-30'}`}>
           <span className="text-xl">📅</span>
-          <span className="text-[10px] text-white font-bold mt-1">포인트</span>
+          <span className="text-[10px] text-white font-bold mt-1">띠</span>
         </button>
       </nav>
 
