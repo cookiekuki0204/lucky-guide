@@ -8,7 +8,7 @@ function App() {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const cardRef = useRef(null);
 
-  // 1. 행운 번호 생성 로직
+  // 1. 번호 생성
   const generateNumbers = () => {
     setIsSpinning(true);
     setTimeout(() => {
@@ -22,7 +22,7 @@ function App() {
     }, 1000);
   };
 
-  // 2. 이미지 다운로드 기능
+  // 2. 이미지 저장
   const downloadImage = async () => {
     if (!cardRef.current) return;
     try {
@@ -34,13 +34,11 @@ function App() {
     } catch (err) { console.error('이미지 저장 실패:', err); }
   };
 
-  // 3. 카카오톡 공유 기능 (확실히 포함!)
+  // 3. 카카오톡 공유
   const shareKakao = () => {
     if (!window.Kakao) return;
     const kakao = window.Kakao;
-    if (!kakao.isInitialized()) {
-      kakao.init('8ee405ddc4c4db04b8de8268a8317426'); // 여기에 발급받으신 JS 키를 넣어주세요.
-    }
+    if (!kakao.isInitialized()) kakao.init('8ee405ddc4c4db04b8de8268a8317426'); // JS KEY 확인 필수
     kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
@@ -52,7 +50,6 @@ function App() {
     });
   };
 
-  // 스타일 정의
   const cardClass = "w-full max-w-[360px] p-8 bg-white rounded-[2.5rem] shadow-xl animate-in fade-in zoom-in-95 duration-500";
   const tabClass = (id) => `flex-1 py-4 text-[11px] font-black transition-all relative ${activeTab === id ? 'text-slate-900' : 'text-slate-400'}`;
 
@@ -79,12 +76,12 @@ function App() {
               <div className="text-center mb-10 text-slate-800">
                 <span className="text-4xl mb-3 block animate-bounce">✨</span>
                 <h2 className="text-xl font-black">당신의 운을 믿으세요</h2>
-                <p className="text-slate-400 text-[10px] mt-2 uppercase font-bold tracking-widest">Lucky Guide Premium</p>
+                <p className="text-slate-400 text-[10px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p>
               </div>
               <div className="flex justify-center gap-2 mb-12 h-10 items-center">
                 {numbers.length > 0 ? numbers.map((num, i) => (
                   <div key={i} className="w-10 h-10 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-sm shadow-lg border border-yellow-500/30">{num}</div>
-                )) : <div className="text-slate-200 text-sm font-bold tracking-widest uppercase tracking-widest">LUCKY NUMBERS</div>}
+                )) : <div className="text-slate-200 text-sm font-bold tracking-widest uppercase">Luck is coming</div>}
               </div>
               <button onClick={generateNumbers} disabled={isSpinning}
                 style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite' }}
@@ -110,18 +107,18 @@ function App() {
 
         {activeTab === 'dream' && (
           <div className={cardClass}>
-            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"로또 당첨을 부르는 길몽 10선"</h2>
+            <h2 className="text-xl font-black text-slate-800 mb-8 text-center italic">"로또 당첨 길몽 10선"</h2>
             <div className="space-y-4 text-[11px] text-slate-600 max-h-[50vh] overflow-y-auto pr-2">
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">1. 연예인이 집에 온 꿈</h3><p>귀인을 만나 재물을 얻을 징조입니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">2. 대통령과 악수</h3><p>명예와 횡재수가 따르는 최고 길몽입니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">3. 조상님의 미소</h3><p>조상님이 무언가 주신다면 대박 신호입니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">4. 똥에 젖는 꿈</h3><p>강력한 재물운의 유입을 상징합니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">5. 집에 큰 불</h3><p>재산이 급격히 번창할 징조입니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">6. 맑은 물 가득</h3><p>집안에 부가 가득 차오름을 뜻합니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">7. 돼지 떼 발견</h3><p>막대한 재물이 굴러오는 꿈입니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">8. 피가 솟구침</h3><p>피가 많이 날수록 큰 횡재수가 있습니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">9. 용의 승천</h3><p>인생 최고의 부귀 기회를 의미합니다.</p></div>
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">10. 돈다발 선물</h3><p>실제 횡재 가능성이 매우 높은 꿈입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">1. 연예인이 집에 온 꿈</h3><p>유명 연예인과 대화하거나 즐거운 시간을 보낸다면 귀인의 도움으로 큰 재물을 얻을 징조입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">2. 대통령과 악수하는 꿈</h3><p>권력자로부터 기운을 받는 꿈으로, 명예와 함께 엄청난 횡재수가 따르는 꿈입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">3. 조상님이 밝게 웃는 꿈</h3><p>조상님이 기쁜 표정으로 무언가를 건네준다면 집안에 경사가 생기고 큰 부를 얻을 신호입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">4. 온몸이 오물(똥)에 젖는 꿈</h3><p>현실에선 불쾌하지만 꿈속에서는 막대한 재물의 유입을 상징하는 전형적인 1등 꿈입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">5. 집이 활활 타는 꿈</h3><p>불길이 거셀수록 사업이 번창하고 재산이 급격히 늘어날 것을 의미하는 길몽입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">6. 맑은 물이 차오르는 꿈</h3><p>깨끗한 물은 재물을 상징하며, 집안 가득 물이 차는 것은 부귀영화를 누릴 징조입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">7. 돼지 떼가 들어오는 꿈</h3><p>풍요의 상징인 돼지 떼가 집안으로 몰려온다면 큰 돈이 굴러들어올 횡재수입니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">8. 피가 솟구치는 꿈</h3><p>꿈에서 피는 생명력과 돈을 뜻합니다. 선명한 붉은 피가 많이 날수록 큰 재물이 생깁니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">9. 용이 승천하는 꿈</h3><p>최고의 권위와 부귀를 상징하며 인생에서 가장 큰 기회가 찾아왔음을 암시합니다.</p></div>
+              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-sm"><h3 className="font-black text-slate-900 mb-1">10. 돈다발을 줍는 꿈</h3><p>말 그대로 실제 횡재로 이어질 가능성이 매우 높은 직관적인 최고의 대박 꿈입니다.</p></div>
             </div>
           </div>
         )}
@@ -150,19 +147,23 @@ function App() {
         <div className="flex justify-center gap-4 mb-4 text-[10px] font-bold text-slate-400">
           <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-yellow-600 underline decoration-slate-200 transition-colors">개인정보처리방침</button>
           <span>|</span>
-          <span className="opacity-50">© 2026 LUCKY GUIDE</span>
+          <span className="opacity-50 font-medium">© 2026 LUCKY GUIDE</span>
         </div>
       </footer>
 
       {isPrivacyOpen && (
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-6" onClick={() => setIsPrivacyOpen(false)}>
           <div className="bg-white w-full max-w-[320px] max-h-[70vh] overflow-y-auto rounded-[2rem] p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-black text-slate-900 mb-4">개인정보처리방침</h3>
-            <div className="text-[11px] text-slate-500 leading-relaxed space-y-4">
-              <p>본 서비스는 사용자의 개인정보를 저장하지 않습니다.</p>
-              <p>1. 모든 추첨은 기기 내에서만 이루어집니다. 2. Google AdSense 광고를 통해 맞춤 정보를 제공할 수 있습니다.</p>
+            <h3 className="text-lg font-black text-slate-900 mb-4 italic">개인정보처리방침</h3>
+            <div className="text-[11px] text-slate-500 leading-relaxed space-y-4 font-medium">
+              <p>본 서비스('럭키가이드')는 사용자의 개인정보를 소중히 다루며 수집하지 않습니다.</p>
+              <div className="space-y-2">
+                <p><strong>1. 개인정보 수집 미실시:</strong> 본 사이트는 성함, 연락처 등 어떠한 개인식별 정보도 요구하거나 서버에 저장하지 않습니다.</p>
+                <p><strong>2. 구글 애드센스 광고:</strong> 서비스 운영을 위해 Google AdSense를 활용하며, 구글은 맞춤 광고를 위해 쿠키 정보를 활용할 수 있습니다.</p>
+                <p><strong>3. 로직 보안:</strong> 모든 번호 추첨은 서버 전송 없이 사용자의 브라우저 로컬 환경에서 즉시 소멸되도록 설계되었습니다.</p>
+              </div>
             </div>
-            <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs">확인</button>
+            <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs active:scale-95 transition-all">확인</button>
           </div>
         </div>
       )}
