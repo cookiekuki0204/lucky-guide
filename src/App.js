@@ -72,9 +72,9 @@ function App() {
         <nav className={`flex backdrop-blur-md border-b overflow-x-auto md:overflow-x-visible no-scrollbar touch-pan-x ${navBg}`}>
           <div className="flex min-w-full md:min-w-0 md:w-full items-center justify-start md:justify-center px-2">
             <button onClick={() => setActiveTab('lotto')} className={tabClass('lotto')}>로또번호추첨기{activeTab === 'lotto' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
-            <button onClick={() => setActiveTab('saju')} className={tabClass('saju')}>AI사주{activeTab === 'saju' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
-            <button onClick={() => setActiveTab('face')} className={tabClass('face')}>AI관상{activeTab === 'face' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
-            <button onClick={() => setActiveTab('palm')} className={tabClass('palm')}>AI손금{activeTab === 'palm' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
+            {/* <button onClick={() => setActiveTab('saju')} className={tabClass('saju')}>AI사주{activeTab === 'saju' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button> */}
+            {/* <button onClick={() => setActiveTab('face')} className={tabClass('face')}>AI관상{activeTab === 'face' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button> */}
+            {/* <button onClick={() => setActiveTab('palm')} className={tabClass('palm')}>AI손금{activeTab === 'palm' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button> */}
             <button onClick={() => setActiveTab('dream')} className={tabClass('dream')}>대박꿈해몽{activeTab === 'dream' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
             <button onClick={() => setActiveTab('guide')} className={tabClass('guide')}>띠별운세{activeTab === 'guide' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
           </div>
@@ -97,7 +97,7 @@ function App() {
             </div>
           )}
 
-          {activeTab === 'saju' && (
+          {/* {activeTab === 'saju' && (
             <div className="text-center py-6">
               <span className="text-5xl mb-6 block">🎎</span><h2 className="text-xl font-black mb-2 italic">타고난 운명, 사주풀이</h2>
               <p className="text-slate-400 text-xs mb-8">생년월일시 데이터를 바탕으로 분석합니다</p>
@@ -106,9 +106,9 @@ function App() {
               </div>
               <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Coming Soon</div>
             </div>
-          )}
+          )} */}
 
-          {/* AI 관상 복구 */}
+          {/* AI 관상 복구
           {activeTab === 'face' && (
             <div className="text-center py-6">
               <span className="text-5xl mb-6 block">🎭</span><h2 className="text-xl font-black mb-2 italic">"재벌이 될 상인가?"</h2>
@@ -118,9 +118,9 @@ function App() {
               </div>
               <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Coming Soon</div>
             </div>
-          )}
+          )} */}
 
-          {/* AI 손금 복구 */}
+          {/* AI 손금 복구
           {activeTab === 'palm' && (
             <div className="text-center py-6">
               <span className="text-5xl mb-6 block">✋</span><h2 className="text-xl font-black mb-2 italic">"손바닥 보물지도"</h2>
@@ -130,7 +130,7 @@ function App() {
               </div>
               <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Coming Soon</div>
             </div>
-          )}
+          )} */}
 
           {activeTab === 'dream' && (
             <div>
