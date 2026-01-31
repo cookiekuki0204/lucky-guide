@@ -34,23 +34,28 @@ function App() {
     if (!cardRef.current) return;
     try {
       const canvas = await html2canvas(cardRef.current, { 
-        backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
+        backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
         scale: 2,
         useCORS: true,
         width: cardRef.current.offsetWidth,
         height: cardRef.current.offsetHeight,
         onclone: (clonedDoc) => {
-          // 캡처용 클론에서 강제 중앙 정렬 보정
+          const clonedCard = clonedDoc.querySelector('.capture-card');
+          if (clonedCard) {
+            clonedCard.style.display = 'flex';
+            clonedCard.style.flexDirection = 'column';
+            clonedCard.style.alignItems = 'center';
+            clonedCard.style.textAlign = 'center';
+          }
+          // [핵심] 캡처 시 숫자가 아래로 쏠리는 현상을 막기 위해 높이를 강제 조정
           const balls = clonedDoc.querySelectorAll('.lotto-ball');
           balls.forEach(ball => {
-            ball.style.display = 'table';
-            const span = ball.querySelector('span');
-            if (span) {
-              span.style.display = 'table-cell';
-              span.style.verticalAlign = 'middle';
-              span.style.textAlign = 'center';
-              span.style.lineHeight = '1';
-            }
+            ball.style.display = 'flex';
+            ball.style.alignItems = 'center';
+            ball.style.justifyContent = 'center';
+            ball.style.lineHeight = 'normal'; 
+            ball.style.padding = '0'; // 패딩 초기화
+            ball.style.paddingBottom = '4px'; // 아래로 쏠리는 만큼 위로 올리기 위해 바닥 패딩 추가
           });
         }
       });
@@ -123,17 +128,34 @@ function App() {
                 {numbers.length > 0 ? numbers.map((num, i) => (
                   <div 
                     key={i} 
-                    className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 font-bold text-xl shadow-lg border border-yellow-500/30"
-                    style={{ display: 'table', borderCollapse: 'separate', flexShrink: 0 }}
+                    className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30"
+                    style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        lineHeight: '1',
+                        padding: '0'
+                    }}
                   >
-                    <span style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
-                      {num}
-                    </span>
+                    {num}
                   </div>
                 )) : <div className="text-slate-300 text-base font-bold tracking-widest uppercase">Ready to Luck</div>}
               </div>
               <div className="w-full flex justify-center">
-                <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
+                <button 
+                  onClick={generateNumbers} 
+                  disabled={isSpinning} 
+                  style={{ 
+                    background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', 
+                    backgroundSize: '400% 400%', 
+                    animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', 
+                    display: 'block', 
+                    width: '100%' 
+                  }} 
+                  className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}
+                >
+                  {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
+                </button>
               </div>
             </div>
           )}
@@ -254,7 +276,7 @@ function App() {
             <div className="text-[13px] leading-relaxed space-y-6 font-medium text-slate-400">
               <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>1. 개인정보 수집 미실시</p><p>성함, 연락처 등 일체의 개인 식별 정보를 수집하거나 저장하지 않습니다.</p></section>
               <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>2. 구글 애드센스 활용</p><p>광고 게재를 위한 구글 쿠키가 사용될 수 있음을 알려드립니다.</p></section>
-              <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>3. 서비스 보안</p><p>모든 데이터는 안전한 로컬 환경에서 즉시 처리됩니다.</p></section>
+              <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>3. 보안 관리</p><p>모든 데이터는 안전한 로컬 환경에서 즉시 처리됩니다.</p></section>
             </div>
             <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-10 py-5 bg-slate-900 text-white rounded-2xl font-bold text-sm">확인했습니다</button>
           </div>
