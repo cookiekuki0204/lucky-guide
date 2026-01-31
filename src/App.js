@@ -47,14 +47,15 @@ function App() {
             clonedCard.style.alignItems = 'center';
             clonedCard.style.textAlign = 'center';
           }
-          // 이미지 저장 시 숫자가 아래로 쏠리는 현상 방지를 위한 강제 수직 중앙 정렬
+          // [핵심] 캡처 시 숫자가 아래로 쏠리는 현상을 막기 위해 높이를 강제 조정
           const balls = clonedDoc.querySelectorAll('.lotto-ball');
           balls.forEach(ball => {
             ball.style.display = 'flex';
             ball.style.alignItems = 'center';
             ball.style.justifyContent = 'center';
-            ball.style.lineHeight = '0'; // 캡처 시 수직 중앙 정렬의 핵심
-            ball.style.paddingTop = '1px'; // 미세 보정
+            ball.style.lineHeight = 'normal'; 
+            ball.style.padding = '0'; // 패딩 초기화
+            ball.style.paddingBottom = '4px'; // 아래로 쏠리는 만큼 위로 올리기 위해 바닥 패딩 추가
           });
         }
       });
@@ -128,7 +129,13 @@ function App() {
                   <div 
                     key={i} 
                     className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30"
-                    style={{ lineHeight: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        lineHeight: '1',
+                        padding: '0'
+                    }}
                   >
                     {num}
                   </div>
