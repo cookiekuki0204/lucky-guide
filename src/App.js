@@ -5,7 +5,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('lotto');
   const [numbers, setNumbers] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  // 사용하지 않는 isPrivacyOpen 제거
   const [isDarkMode, setIsDarkMode] = useState(false);
   const cardRef = useRef(null);
 
@@ -13,7 +13,7 @@ function App() {
   const [sajuData, setSajuData] = useState({ date: '', time: 'unknown' });
   const [sajuResult, setSajuResult] = useState(null);
   const [aiStep, setAiStep] = useState('input'); // input, loading, result
-  const [aiType, setAiType] = useState(null); // face, palm
+  // 사용하지 않는 aiType 제거
   const [selectedImage, setSelectedImage] = useState(null);
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
@@ -38,8 +38,7 @@ function App() {
   };
 
   // 공통 AI 분석 시뮬레이션
-  const startAiAnalysis = (type) => {
-    setAiType(type);
+  const startAiAnalysis = () => {
     setAiStep('loading');
     setTimeout(() => {
       setAiStep('result');
@@ -106,18 +105,18 @@ function App() {
     });
   };
 
-  const bgClass = isDarkMode ? "bg-[#0f172a] text-slate-100" : "bg-[#ffffff] text-slate-800";
-  const navBg = isDarkMode ? "bg-[#0f172a]/90 border-slate-800" : "bg-white/95 border-slate-100";
-  const cardClass = `w-full max-w-[360px] p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in-95 duration-500 ${isDarkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-50'}`;
-  const tabClass = (id) => `flex-none md:flex-1 px-5 md:px-2 py-5 text-[14px] md:text-[15px] font-black transition-all relative whitespace-nowrap text-center ${activeTab === id ? (isDarkMode ? 'text-yellow-400' : 'text-slate-900') : (isDarkMode ? 'text-slate-500' : 'text-slate-400')}`;
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
-      startAiAnalysis(activeTab);
+      startAiAnalysis();
     }
   };
+
+  const bgClass = isDarkMode ? "bg-[#0f172a] text-slate-100" : "bg-[#ffffff] text-slate-800";
+  const navBg = isDarkMode ? "bg-[#0f172a]/90 border-slate-800" : "bg-white/95 border-slate-100";
+  const cardClass = `w-full max-w-[360px] p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in-95 duration-500 ${isDarkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-50'}`;
+  const tabClass = (id) => `flex-none md:flex-1 px-5 md:px-2 py-5 text-[14px] md:text-[15px] font-black transition-all relative whitespace-nowrap text-center ${activeTab === id ? (isDarkMode ? 'text-yellow-400' : 'text-slate-900') : (isDarkMode ? 'text-slate-500' : 'text-slate-400')}`;
 
   return (
     <div className={`min-h-screen ${bgClass} flex flex-col items-center font-sans overflow-x-hidden relative transition-colors duration-300`}>
@@ -294,8 +293,6 @@ function App() {
 
       <footer className={`w-full max-w-[360px] py-20 px-6 text-center border-t mt-auto ${isDarkMode ? 'border-slate-800' : 'border-slate-100'}`}>
         <div className="flex justify-center gap-6 mb-4 text-[12px] font-bold text-slate-400">
-          <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-yellow-600 underline transition-colors">개인정보처리방침</button>
-          <span>|</span>
           <span className="opacity-50">© 2026 LUCKY GUIDE</span>
         </div>
       </footer>
