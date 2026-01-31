@@ -184,7 +184,12 @@ function App() {
                     
                     {/* 3. 사주 입력 필드 수정: 날짜 + 태어난 시간 */}
                     <div className="space-y-4">
-                      <input type="date" className={`w-full p-5 rounded-2xl border-2 outline-none font-bold text-center ${isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-slate-50 border-slate-100'}`} onChange={(e) => setSajuData({...sajuData, date: e.target.value})} />
+                      <input 
+                      type="date"
+                      max={new Date().toISOString().split("T")[0]}
+                      className={`w-full p-5 rounded-2xl border-2 outline-none font-bold text-center ${isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-slate-50 border-slate-100'}`}
+                      onChange={(e) => setSajuData({...sajuData, date: e.target.value})} 
+                      />
                       <select className={`w-full p-5 rounded-2xl border-2 outline-none font-bold text-center appearance-none ${isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-slate-50 border-slate-100'}`} onChange={(e) => setSajuData({...sajuData, time: e.target.value})}>
                         <option value="unknown">태어난 시간 선택 (모름)</option>
                         <option value="0">자시 (23~01시)</option><option value="1">축시 (01~03시)</option>
