@@ -40,13 +40,21 @@ function App() {
         width: cardRef.current.offsetWidth,
         height: cardRef.current.offsetHeight,
         onclone: (clonedDoc) => {
+          const clonedCard = clonedDoc.querySelector('.capture-card');
+          if (clonedCard) {
+            clonedCard.style.display = 'flex';
+            clonedCard.style.flexDirection = 'column';
+            clonedCard.style.alignItems = 'center';
+            clonedCard.style.textAlign = 'center';
+          }
+          // 이미지 저장 시 숫자가 아래로 쏠리는 현상 방지를 위한 강제 수직 중앙 정렬
           const balls = clonedDoc.querySelectorAll('.lotto-ball');
           balls.forEach(ball => {
             ball.style.display = 'flex';
             ball.style.alignItems = 'center';
             ball.style.justifyContent = 'center';
-            ball.style.lineHeight = '1'; // 텍스트가 아래로 쏠리는 현상 방지
-            ball.style.paddingTop = '2px'; // 미세 조정 (기기별 차이 대응)
+            ball.style.lineHeight = '0'; // 캡처 시 수직 중앙 정렬의 핵심
+            ball.style.paddingTop = '1px'; // 미세 보정
           });
         }
       });
@@ -117,11 +125,30 @@ function App() {
               </div>
               <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full" style={{ display: 'flex', justifyContent: 'center' }}>
                 {numbers.length > 0 ? numbers.map((num, i) => (
-                  <div key={i} className="w-11 h-11 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30" style={{ minWidth: '44px' }}>{num}</div>
+                  <div 
+                    key={i} 
+                    className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30"
+                    style={{ lineHeight: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    {num}
+                  </div>
                 )) : <div className="text-slate-300 text-base font-bold tracking-widest uppercase">Ready to Luck</div>}
               </div>
               <div className="w-full flex justify-center">
-                <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
+                <button 
+                  onClick={generateNumbers} 
+                  disabled={isSpinning} 
+                  style={{ 
+                    background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', 
+                    backgroundSize: '400% 400%', 
+                    animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', 
+                    display: 'block', 
+                    width: '100%' 
+                  }} 
+                  className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}
+                >
+                  {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
+                </button>
               </div>
             </div>
           )}
@@ -239,7 +266,7 @@ function App() {
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-6" onClick={() => setIsPrivacyOpen(false)}>
           <div className={`${isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-white text-slate-500'} w-full max-w-[340px] max-h-[70vh] overflow-y-auto rounded-[2rem] p-8 shadow-2xl text-left`} onClick={(e) => e.stopPropagation()}>
             <h3 className={`text-xl font-black mb-6 border-b pb-2 ${isDarkMode ? 'text-white border-slate-700' : 'text-slate-900 border-slate-100'}`}>개인정보처리방침</h3>
-            <div className="text-[13px] leading-relaxed space-y-6 font-medium">
+            <div className="text-[13px] leading-relaxed space-y-6 font-medium text-slate-400">
               <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>1. 개인정보 수집 미실시</p><p>성함, 연락처 등 일체의 개인 식별 정보를 수집하거나 저장하지 않습니다.</p></section>
               <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>2. 구글 애드센스 활용</p><p>광고 게재를 위한 구글 쿠키가 사용될 수 있음을 알려드립니다.</p></section>
               <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>3. 보안 관리</p><p>모든 데이터는 안전한 로컬 환경에서 즉시 처리됩니다.</p></section>
