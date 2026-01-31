@@ -37,7 +37,17 @@ function App() {
         backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
         scale: 2,
         useCORS: true,
-        windowWidth: 360
+        width: cardRef.current.offsetWidth,
+        height: cardRef.current.offsetHeight,
+        onclone: (clonedDoc) => {
+          const clonedCard = clonedDoc.querySelector('.capture-card');
+          if (clonedCard) {
+            clonedCard.style.display = 'flex';
+            clonedCard.style.flexDirection = 'column';
+            clonedCard.style.alignItems = 'center';
+            clonedCard.style.textAlign = 'center';
+          }
+        }
       });
       const link = document.createElement('a');
       link.download = `lucky-numbers.png`;
@@ -96,7 +106,7 @@ function App() {
       <main className="w-full flex flex-col items-center px-6 py-8 pb-32">
         <AdSlot id="TOP" />
 
-        <div ref={cardRef} className={cardClass}>
+        <div ref={cardRef} className={`${cardClass} capture-card`}>
           {activeTab === 'lotto' && (
             <div className="flex flex-col items-center w-full">
               <div className="text-center mb-10">
@@ -104,20 +114,22 @@ function App() {
                 <h2 className="text-2xl font-black">당신의 운을 믿으세요</h2>
                 <p className="text-slate-400 text-[12px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p>
               </div>
-              <div className="flex justify-center gap-3 mb-12 h-14 items-center w-full">
+              <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full" style={{ display: 'flex', justifyContent: 'center' }}>
                 {numbers.length > 0 ? numbers.map((num, i) => (
-                  <div key={i} className="w-11 h-11 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30">{num}</div>
+                  <div key={i} className="w-11 h-11 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30" style={{ minWidth: '44px' }}>{num}</div>
                 )) : <div className="text-slate-300 text-base font-bold tracking-widest uppercase">Ready to Luck</div>}
               </div>
-              <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite' }} className={`w-full py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
+              <div className="w-full flex justify-center">
+                <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
+              </div>
             </div>
           )}
 
           {activeTab === 'saju' && (
-            <div className="text-center py-6">
+            <div className="text-center py-6 w-full flex flex-col items-center">
               <span className="text-6xl mb-6 block">🎎</span>
-              <h2 className="text-2xl font-black mb-4">타고난 운명, 사주풀이</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
+              <h2 className="text-2xl font-black mb-4 text-center">타고난 운명, 사주풀이</h2>
+              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
                 <p><strong>사주팔자는 인생의 설계도입니다.</strong> 태어난 연, 월, 일, 시의 기운이 당신의 평생 운을 결정합니다.</p>
                 <p>로또와 같은 큰 재물운은 사주에서 <strong>'편재'</strong>의 기운이 강할 때 찾아옵니다. 럭키가이드 AI는 당신의 사주 속 재물 기운이 극대화되는 황금 시간대를 분석하여 최적의 행운을 가이드합니다.</p>
               </div>
@@ -126,10 +138,10 @@ function App() {
           )}              
 
           {activeTab === 'face' && (
-            <div className="text-center py-6">
+            <div className="text-center py-6 w-full flex flex-col items-center">
               <span className="text-6xl mb-6 block">🎭</span>
-              <h2 className="text-2xl font-black mb-4">재벌이 될 상인가?</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
+              <h2 className="text-2xl font-black mb-4 text-center">재벌이 될 상인가?</h2>
+              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
                 <p className="mb-4"><strong>코는 재산이 머무는 창고입니다.</strong> 관상학에서는 얼굴의 중심인 코와 입의 균형을 통해 말년의 경제적 풍요를 점칩니다.</p>
                 <p>AI 얼굴 인식 기술로 당신의 이목구비에 담긴 재물복을 분석해 드릴 예정입니다. 곧 사진 업로드 기능이 시작됩니다.</p>
               </div>
@@ -138,10 +150,10 @@ function App() {
           )}
 
           {activeTab === 'palm' && (
-            <div className="text-center py-6">
+            <div className="text-center py-6 w-full flex flex-col items-center">
               <span className="text-6xl mb-6 block">✋</span>
-              <h2 className="text-2xl font-black mb-4">손바닥 속 보물지도</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
+              <h2 className="text-2xl font-black mb-4 text-center">손바닥 속 보물지도</h2>
+              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
                 <p><strong>재물선이 뚜렷하면 대박의 징조입니다.</strong> 수상학에서 손금은 뇌의 신경과 연결되어 그 사람의 에너지를 실시간으로 반영합니다.</p>
                 <p>로또 당첨자들에게서 흔히 발견되는 <strong>삼지창 손금</strong>과 재운선을 AI가 스캔하여 당신의 현재 재물운 지수를 분석해 드립니다.</p>
               </div>
@@ -150,9 +162,9 @@ function App() {
           )}
           
           {activeTab === 'dream' && (
-            <div className="w-full">
+            <div className="w-full flex flex-col items-center">
               <h2 className="text-2xl font-black mb-6 text-center">로또 당첨 길몽 10선</h2>
-              <div className="space-y-4 text-[14px] h-[380px] overflow-y-auto pr-2 no-scrollbar font-medium">
+              <div className="space-y-4 text-[14px] h-[380px] overflow-y-auto pr-2 no-scrollbar font-medium w-full">
                 {[
                   {t: "연예인이 집에 온 꿈", d: "재물운이 크게 상승할 징조입니다."},
                   {t: "대통령과 악수하는 꿈", d: "명예와 횡재수가 따르는 최고 길몽입니다."},
@@ -174,12 +186,12 @@ function App() {
           )}
 
           {activeTab === 'guide' && (
-            <div>
+            <div className="w-full flex flex-col items-center">
               <h2 className="text-2xl font-black mb-6 text-center">12간지 행운 포인트</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
+              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
                 <p><strong>띠별 오행의 조화:</strong> 12간지는 각기 고유한 기운을 지닙니다. 이에 따라 로또 번호의 홀짝 조합이나 특정 숫자대의 기운이 달라집니다.</p>
               </div>
-              <div className={`overflow-hidden rounded-3xl border shadow-sm ${isDarkMode ? 'border-slate-700' : 'border-slate-100'}`}>
+              <div className={`overflow-hidden rounded-3xl border shadow-sm w-full ${isDarkMode ? 'border-slate-700' : 'border-slate-100'}`}>
                 <table className="w-full text-[13px] text-center border-collapse font-medium">
                   <thead className={isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-50 text-slate-400'}><tr><th className="p-4">띠 그룹</th><th className="p-4">행운 숫자</th><th className="p-4">컬러</th></tr></thead>
                   <tbody className={`divide-y ${isDarkMode ? 'divide-slate-700 text-slate-300' : 'divide-slate-50 text-slate-700'}`}>
