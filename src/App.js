@@ -11,7 +11,6 @@ function App() {
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  // 광고 슬롯 (애드센스 승인 필수 레이아웃)
   const AdSlot = ({ id }) => (
     <div className={`w-full max-w-[360px] my-4 p-3 text-center border border-dashed rounded-2xl ${isDarkMode ? 'border-slate-700 bg-slate-800/50' : 'border-slate-200 bg-slate-50'}`}>
       <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Advertisement - {id}</p>
@@ -96,33 +95,26 @@ function App() {
               <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite' }} className={`w-full py-5 rounded-2xl font-black text-slate-900 text-lg shadow-xl shadow-yellow-200/50 ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
             </div>
           )}
+
           {activeTab === 'saju' && (
             <div className="text-center py-6">
               <span className="text-5xl mb-6 block">🎎</span>
               <h2 className="text-xl font-black mb-2 italic">타고난 운명, 사주풀이</h2>
               <div className={`p-6 rounded-3xl text-left text-[12px] leading-relaxed font-medium space-y-4 ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
-                <p>
-                  <strong>"사주팔자는 인생의 설계도와 같습니다."</strong> 사주란 사람이 태어난 연(年), 월(月), 일(日), 시(時)의 네 기둥을 의미합니다. 각각의 기둥은 두 개의 글자로 이루어져 총 여덟 글자가 되는데, 이것이 바로 우리가 흔히 말하는 '사주팔자'입니다.
-                </p>
-                <p>
-                  명리학적으로 로또 당첨과 같은 횡재수는 <strong>'편재(偏財)'</strong>의 기운과 밀접한 관련이 있습니다. 정재가 정당한 노력의 대가라면, 편재는 생각지 못한 큰 재물을 뜻합니다. 럭키가이드의 AI는 당신의 사주 원국에서 편재의 힘이 강해지는 시기와 행운의 오행(나무, 불, 흙, 금, 물)을 분석합니다.
-                </p>
-                <p>
-                  예를 들어, 자신의 기운이 강한 '신강(身强)' 사주에 재물운이 들어오는 세운(Yearly Luck)이 겹칠 때 대박의 기운이 가장 강해집니다. 현재 AI 사주 엔진은 수천 명의 당첨자 사주 데이터를 학습하고 있으며, 곧 당신의 생년월일시만으로 정확한 행운의 타이밍을 짚어드릴 예정입니다.
-                </p>
+                <p><strong>"사주팔자는 인생의 설계도와 같습니다."</strong> 사주는 사람이 태어난 연, 월, 일, 시의 네 기둥을 의미하며 이는 타고난 기운의 흐름을 결정합니다.</p>
+                <p>로또 당첨과 같은 횡재수는 사주에서 <strong>'편재(偏財)'</strong>의 기운과 밀접합니다. 럭키가이드 AI는 당신의 사주에서 재물운이 극대화되는 시기와 오행의 조화를 분석하여 행운의 타이밍을 안내합니다.</p>
               </div>
               <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">AI Engine Updating...</div>
             </div>
           )}              
-          // App.js 내 관상 탭 부분
+
           {activeTab === 'face' && (
             <div className="text-center py-6">
               <span className="text-5xl mb-6 block">🎭</span>
               <h2 className="text-xl font-black mb-2 italic">"재벌이 될 상인가?"</h2>
               <div className={`p-6 rounded-3xl text-left text-[12px] leading-relaxed font-medium ${isDarkMode ? 'bg-slate-700/50 text-slate-300' : 'bg-slate-50 text-slate-500'}`}>
-                <p className="mb-4">"코는 재물 창고라 하였습니다." 관상학에서 재물운을 볼 때 가장 중요하게 여기는 부위는 '중정'인 코와 '하정'인 입과 턱입니다. 코 끝이 둥글고 콧구멍이 보이지 않는 관상은 재산이 잘 쌓이는 관상으로 알려져 있습니다.</p>
-                <p className="mb-4">럭키가이드 AI 관상 서비스는 얼굴의 68개 랜드마크를 추출하여, 전통 관상학에서 말하는 '오관'의 조화를 분석합니다. 당신의 눈빛에서 느껴지는 기운과 이마의 넓이가 상징하는 초년운, 중년운을 확인해 보세요.</p>
-                <p>현재 AI 엔진 최적화 작업 중이며, 곧 당신의 사진 한 장으로 재물복을 점칠 수 있는 정식 서비스가 시작됩니다!</p>
+                <p className="mb-4">"코는 재물 창고라 하였습니다." 관상학에서 재물운의 핵심인 '중정'과 '하정'의 조화를 분석합니다. 코의 모양과 입술의 끝 모양은 재산이 머무는 그릇을 상징합니다.</p>
+                <p>AI 얼굴 인식 기술로 당신의 이목구비에 담긴 초년, 중년, 말년의 운세를 정밀 분석해 드릴 예정입니다. 곧 사진 업로드 기능이 시작됩니다.</p>
               </div>
               <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Content Updating...</div>
             </div>
@@ -133,15 +125,8 @@ function App() {
               <span className="text-5xl mb-6 block">✋</span>
               <h2 className="text-xl font-black mb-2 italic">"손바닥 속 보물지도"</h2>
               <div className={`p-6 rounded-3xl text-left text-[12px] leading-relaxed font-medium space-y-4 ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
-                <p>
-                  <strong>"재물선이 뚜렷하니 대박의 징조로다."</strong> 수상학(손금)에서 손바닥의 선들은 뇌의 신경과 연결되어 그 사람의 성향과 운명을 실시간으로 반영한다고 봅니다. 특히 재물과 관련된 선은 약지 아래로 뻗은 '태양선'과 새끼손가락 아래의 '재운선'입니다.
-                </p>
-                <p>
-                  로또 당첨자들에게서 자주 발견되는 <strong>'삼지창 손금'</strong>은 감정선 위로 재운선, 태양선, 운명선이 세 줄기 창처럼 뻗어 나가는 모양을 말합니다. 또한, 생명선에서 시작해 중지로 뻗은 선이 뚜렷하다면 본인의 노력과 운이 합쳐져 큰 자산가로 성장할 가능성이 매우 높습니다.
-                </p>
-                <p>
-                  럭키가이드 AI 손금 분석은 카메라로 촬영된 손바닥 이미지를 스캔하여 미세한 잔금까지 분석합니다. 손바닥의 두툼한 '언덕(丘)'들이 상징하는 에너지와 선들의 굵기, 끊김을 정밀하게 계산하여 당신의 현재 재물운 지수를 수치화해 드립니다. 곧 손바닥 촬영 기능이 활성화될 예정이니 조금만 기다려 주세요!
-                </p>
+                <p><strong>"재물선이 뚜렷하니 대박의 징조로다."</strong> 수상학에서 손금은 뇌의 신경과 연결되어 운명을 반영합니다. 특히 약지 아래의 '태양선'과 새끼손가락 아래의 '재운선'은 부를 상징합니다.</p>
+                <p>로또 당첨자들에게서 흔히 발견되는 <strong>'삼지창 손금'</strong> 유무를 AI가 정밀 스캔하여 당신의 재물운 지수를 알려드립니다.</p>
               </div>
               <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">AI Scanning Ready...</div>
             </div>
@@ -173,15 +158,19 @@ function App() {
 
           {activeTab === 'guide' && (
             <div>
-              <h2 className="text-xl font-black mb-8 text-center italic">"12간지 행운 포인트"</h2>
+              <h2 className="text-xl font-black mb-6 text-center italic">"12간지 띠별 행운 포인트"</h2>
+              <div className={`p-5 rounded-3xl text-left text-[11px] leading-relaxed font-medium space-y-4 mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
+                <p><strong>띠별 오행의 조화:</strong> 동양학에서 12간지는 각기 고유한 오행(나무, 불, 흙, 금, 물)을 지닙니다. 이 기운에 따라 로또 번호의 홀짝 조합이나 특정 숫자대(20번대, 30번대 등)의 기운이 달라집니다.</p>
+                <p>예를 들어 <strong>범/말/개(화기운)</strong> 그룹은 분산된 번호보다 집중된 번호대에서 큰 행운을 얻는 경향이 있습니다. 아래 표에서 당신의 그룹에 맞는 행운의 상징을 확인하세요.</p>
+              </div>
               <div className={`overflow-hidden rounded-3xl border shadow-sm ${isDarkMode ? 'border-slate-700' : 'border-slate-100'}`}>
                 <table className="w-full text-[10px] text-center border-collapse font-medium">
-                  <thead className={isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-50 text-slate-400'}><tr><th className="p-3">띠별 그룹</th><th className="p-3">숫자</th><th className="p-3">컬러</th></tr></thead>
+                  <thead className={isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-50 text-slate-400'}><tr><th className="p-3">띠별 그룹</th><th className="p-3">행운 숫자</th><th className="p-3">컬러</th></tr></thead>
                   <tbody className={`divide-y italic ${isDarkMode ? 'divide-slate-700 text-slate-300' : 'divide-slate-50 text-slate-700'}`}>
-                    <tr><td className="p-3">쥐/용/원숭이</td><td className="p-3">1, 6</td><td className="p-3 text-blue-500 font-black">BLUE</td></tr>
-                    <tr><td className="p-3">소/뱀/닭</td><td className="p-3">2, 7</td><td className="p-3 text-red-500 font-black">RED</td></tr>
-                    <tr><td className="p-3">범/말/개</td><td className="p-3">3, 8</td><td className="p-3 text-green-600 font-black">GREEN</td></tr>
-                    <tr><td className="p-3">토끼/양/돼지</td><td className="p-3">4, 9</td><td className="p-3 text-slate-400 font-black text-[9px]">WHITE</td></tr>
+                    <tr><td className="p-3">쥐/용/원숭이</td><td className="p-3 font-black">1, 6, 15, 29</td><td className="p-3 text-blue-500 font-black">BLUE</td></tr>
+                    <tr><td className="p-3">소/뱀/닭</td><td className="p-3 font-black">2, 7, 24, 38</td><td className="p-3 text-red-500 font-black">RED</td></tr>
+                    <tr><td className="p-3">범/말/개</td><td className="p-3 font-black">3, 8, 19, 42</td><td className="p-3 text-green-600 font-black">GREEN</td></tr>
+                    <tr><td className="p-3">토끼/양/돼지</td><td className="p-3 font-black">4, 9, 31, 45</td><td className="p-3 text-slate-400 font-black">WHITE</td></tr>
                   </tbody>
                 </table>
               </div>
