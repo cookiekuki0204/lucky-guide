@@ -9,6 +9,13 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const cardRef = useRef(null);
 
+  // AI 기능용 상태값
+  const [sajuData, setSajuData] = useState({ date: '', time: 'unknown' });
+  const [sajuResult, setSajuResult] = useState(null);
+  const [aiStep, setAiStep] = useState('input'); // input, loading, result
+  const [aiType, setAiType] = useState(null); // face, palm
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   const AdSlot = ({ id }) => (
@@ -30,32 +37,49 @@ function App() {
     }, 1000);
   };
 
+  // 공통 AI 분석 시뮬레이션
+  const startAiAnalysis = (type) => {
+    setAiType(type);
+    setAiStep('loading');
+    setTimeout(() => {
+      setAiStep('result');
+    }, 3000);
+  };
+
+  const analyzeSaju = () => {
+    if (!sajuData.date) return alert("생년월일을 선택해주세요!");
+    setIsSpinning(true);
+    setTimeout(() => {
+      const sajuResults = [
+        { title: "천복성(天福星)의 기운", desc: "타고난 재물 창고가 넓어 평생 먹을 복이 끊이지 않는 사주입니다. 특히 올해는 '편재'의 기운이 강하게 들어와 예상치 못한 횡재수가 따를 수 있습니다.", lucky: "금전운: 95%, 횡재수: 상", tip: "토요일 오후, 동쪽 방향의 판매점을 이용해보세요." },
+        { title: "황금 들판의 기운", desc: "성실함이 재물로 이어지는 사주이나, 가끔씩 찾아오는 운의 흐름을 잡는 직관이 탁월합니다. 현재 대운이 금(金)의 기운으로 흐르고 있어 결실을 맺기 좋은 시기입니다.", lucky: "금전운: 88%, 횡재수: 중상", tip: "금속 재질의 액세서리를 착용하면 행운이 상승합니다." },
+        { title: "수처작주(隨處作主)의 기운", desc: "어디서든 주인이 될 상이며 스스로 운명을 개척하는 힘이 강합니다. 로또와 같은 큰 재물은 본인의 컨디션이 가장 좋을 때 직감적으로 찾아옵니다.", lucky: "금전운: 92%, 횡재수: 최상", tip: "붉은색 아이템을 지니고 번호를 선택하는 것이 유리합니다." }
+      ];
+      setSajuResult(sajuResults[new Date(sajuData.date).getDate() % 3]);
+      setIsSpinning(false);
+    }, 2000);
+  };
+
   const downloadImage = async () => {
     if (!cardRef.current) return;
     try {
       const canvas = await html2canvas(cardRef.current, { 
-        backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
+        backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
         scale: 2,
         useCORS: true,
         width: cardRef.current.offsetWidth,
         height: cardRef.current.offsetHeight,
         onclone: (clonedDoc) => {
-          const clonedCard = clonedDoc.querySelector('.capture-card');
-          if (clonedCard) {
-            clonedCard.style.display = 'flex';
-            clonedCard.style.flexDirection = 'column';
-            clonedCard.style.alignItems = 'center';
-            clonedCard.style.textAlign = 'center';
-          }
-          // [핵심] 캡처 시 숫자가 아래로 쏠리는 현상을 막기 위해 높이를 강제 조정
           const balls = clonedDoc.querySelectorAll('.lotto-ball');
           balls.forEach(ball => {
-            ball.style.display = 'flex';
-            ball.style.alignItems = 'center';
-            ball.style.justifyContent = 'center';
-            ball.style.lineHeight = 'normal'; 
-            ball.style.padding = '0'; // 패딩 초기화
-            ball.style.paddingBottom = '4px'; // 아래로 쏠리는 만큼 위로 올리기 위해 바닥 패딩 추가
+            ball.style.display = 'table';
+            const span = ball.querySelector('span');
+            if (span) {
+              span.style.display = 'table-cell';
+              span.style.verticalAlign = 'middle';
+              span.style.textAlign = 'center';
+              span.style.lineHeight = '1';
+            }
           });
         }
       });
@@ -87,6 +111,14 @@ function App() {
   const cardClass = `w-full max-w-[360px] p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in-95 duration-500 ${isDarkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-50'}`;
   const tabClass = (id) => `flex-none md:flex-1 px-5 md:px-2 py-5 text-[14px] md:text-[15px] font-black transition-all relative whitespace-nowrap text-center ${activeTab === id ? (isDarkMode ? 'text-yellow-400' : 'text-slate-900') : (isDarkMode ? 'text-slate-500' : 'text-slate-400')}`;
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      startAiAnalysis(activeTab);
+    }
+  };
+
   return (
     <div className={`min-h-screen ${bgClass} flex flex-col items-center font-sans overflow-x-hidden relative transition-colors duration-300`}>
       <header className={`w-full max-w-[400px] md:max-w-[700px] sticky top-0 z-40 transition-colors ${isDarkMode ? 'bg-[#0f172a]' : 'bg-white'}`}>
@@ -104,7 +136,7 @@ function App() {
               { id: 'dream', label: '꿈해몽' },
               { id: 'guide', label: '띠별운세' }
             ].map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={tabClass(tab.id)}>
+              <button key={tab.id} onClick={() => { setActiveTab(tab.id); setAiStep('input'); setSajuResult(null); setSelectedImage(null); }} className={tabClass(tab.id)}>
                 {tab.label}
                 {activeTab === tab.id && <div className="absolute bottom-0 left-2 right-2 h-1 bg-yellow-500 rounded-full" />}
               </button>
@@ -119,83 +151,82 @@ function App() {
         <div ref={cardRef} className={`${cardClass} capture-card`}>
           {activeTab === 'lotto' && (
             <div className="flex flex-col items-center w-full">
-              <div className="text-center mb-10">
-                <span className="text-5xl mb-4 block animate-bounce">✨</span>
-                <h2 className="text-2xl font-black">당신의 운을 믿으세요</h2>
-                <p className="text-slate-400 text-[12px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p>
-              </div>
+              <div className="text-center mb-10"><span className="text-5xl mb-4 block animate-bounce">✨</span><h2 className="text-2xl font-black">당신의 운을 믿으세요</h2><p className="text-slate-400 text-[12px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p></div>
               <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full" style={{ display: 'flex', justifyContent: 'center' }}>
                 {numbers.length > 0 ? numbers.map((num, i) => (
-                  <div 
-                    key={i} 
-                    className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-bold text-lg shadow-lg border border-yellow-500/30"
-                    style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        lineHeight: '1',
-                        padding: '0'
-                    }}
-                  >
-                    {num}
+                  <div key={i} className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 font-bold text-xl shadow-lg border border-yellow-500/30" style={{ display: 'table', borderCollapse: 'separate', flexShrink: 0 }}>
+                    <span style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>{num}</span>
                   </div>
                 )) : <div className="text-slate-300 text-base font-bold tracking-widest uppercase">Ready to Luck</div>}
               </div>
-              <div className="w-full flex justify-center">
-                <button 
-                  onClick={generateNumbers} 
-                  disabled={isSpinning} 
-                  style={{ 
-                    background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', 
-                    backgroundSize: '400% 400%', 
-                    animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', 
-                    display: 'block', 
-                    width: '100%' 
-                  }} 
-                  className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}
-                >
-                  {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
-                </button>
-              </div>
+              <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
             </div>
           )}
 
           {activeTab === 'saju' && (
-            <div className="text-center py-6 w-full flex flex-col items-center">
-              <span className="text-6xl mb-6 block">🎎</span>
-              <h2 className="text-2xl font-black mb-4 text-center">타고난 운명, 사주풀이</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
-                <p><strong>사주팔자는 인생의 설계도입니다.</strong> 태어난 연, 월, 일, 시의 기운이 당신의 평생 운을 결정합니다.</p>
-                <p>로또와 같은 큰 재물운은 사주에서 <strong>'편재'</strong>의 기운이 강할 때 찾아옵니다. 럭키가이드 AI는 당신의 사주 속 재물 기운이 극대화되는 황금 시간대를 분석하여 최적의 행운을 가이드합니다.</p>
-              </div>
-              <div className="mt-8 inline-block px-5 py-2 bg-yellow-100 text-yellow-700 text-[11px] font-black rounded-full animate-pulse uppercase">AI Engine Updating...</div>
+            <div className="flex flex-col items-center w-full">
+              {!sajuResult ? (
+                <div className="w-full text-center py-4">
+                  <span className="text-6xl mb-6 block">🎎</span>
+                  <h2 className="text-2xl font-black mb-6">당신의 사주를 분석합니다</h2>
+                  <div className={`p-6 rounded-3xl space-y-4 mb-8 ${isDarkMode ? 'bg-slate-700/50' : 'bg-slate-50'}`}>
+                    <div className="flex flex-col text-left"><label className="text-[12px] font-bold text-slate-400 mb-2 uppercase ml-1">Birth Date</label>
+                    <input type="date" className={`w-full p-4 rounded-2xl font-bold outline-none border-2 transition-all ${isDarkMode ? 'bg-slate-800 border-slate-600 text-white' : 'bg-white border-slate-100'}`} onChange={(e) => setSajuData({...sajuData, date: e.target.value})} /></div>
+                    <div className="flex flex-col text-left"><label className="text-[12px] font-bold text-slate-400 mb-2 uppercase ml-1">Birth Time</label>
+                    <select className={`w-full p-4 rounded-2xl font-bold outline-none border-2 transition-all ${isDarkMode ? 'bg-slate-800 border-slate-600 text-white' : 'bg-white border-slate-100'}`} onChange={(e) => setSajuData({...sajuData, time: e.target.value})}>
+                      <option value="unknown">모름 / 선택안함</option><option value="0">자시 (23~01시)</option><option value="2">축시 (01~03시)</option><option value="4">인시 (03~05시)</option><option value="6">묘시 (05~07시)</option><option value="8">진시 (07~09시)</option><option value="10">사시 (09~11시)</option><option value="12">오시 (11~13시)</option><option value="14">미시 (13~15시)</option><option value="16">신시 (15~17시)</option><option value="18">유시 (17~19시)</option><option value="20">술시 (19~21시)</option><option value="22">해시 (21~23시)</option>
+                    </select></div>
+                  </div>
+                  <button onClick={analyzeSaju} disabled={isSpinning} className={`w-full py-6 rounded-2xl font-black text-xl shadow-xl transition-all ${isSpinning ? 'bg-slate-300' : 'bg-slate-900 text-white'}`}>{isSpinning ? '운명을 분석 중...' : '사주 분석하기'}</button>
+                </div>
+              ) : (
+                <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  <div className="text-center mb-6"><span className="text-4xl">📜</span><h2 className="text-2xl font-black mt-2">{sajuResult.title}</h2></div>
+                  <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
+                    <p>{sajuResult.desc}</p><p className="text-yellow-600 font-black">✨ {sajuResult.lucky}</p><p className="text-sm opacity-80 italic">💡 {sajuResult.tip}</p>
+                  </div>
+                  <button onClick={() => setSajuResult(null)} className="w-full py-4 rounded-2xl font-bold text-slate-400 border border-slate-200">다시 입력하기</button>
+                </div>
+              )}
             </div>
-          )}              
+          )}
 
-          {activeTab === 'face' && (
-            <div className="text-center py-6 w-full flex flex-col items-center">
-              <span className="text-6xl mb-6 block">🎭</span>
-              <h2 className="text-2xl font-black mb-4 text-center">재벌이 될 상인가?</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
-                <p className="mb-4"><strong>코는 재산이 머무는 창고입니다.</strong> 관상학에서는 얼굴의 중심인 코와 입의 균형을 통해 말년의 경제적 풍요를 점칩니다.</p>
-                <p>AI 얼굴 인식 기술로 당신의 이목구비에 담긴 재물복을 분석해 드릴 예정입니다. 곧 사진 업로드 기능이 시작됩니다.</p>
-              </div>
-              <div className="mt-8 inline-block px-5 py-2 bg-yellow-100 text-yellow-700 text-[11px] font-black rounded-full animate-pulse uppercase">Content Updating...</div>
+          {(activeTab === 'face' || activeTab === 'palm') && (
+            <div className="flex flex-col items-center w-full">
+              {aiStep === 'input' && (
+                <div className="text-center py-6 w-full">
+                  <span className="text-6xl mb-6 block">{activeTab === 'face' ? '🎭' : '✋'}</span>
+                  <h2 className="text-2xl font-black mb-4">{activeTab === 'face' ? '관상 분석' : '손금 분석'}</h2>
+                  <p className="text-slate-400 text-sm mb-8 leading-relaxed">사진을 업로드하면 AI가 당신의<br/>재물복과 행운을 분석합니다.</p>
+                  <label className="w-full py-6 rounded-2xl font-black text-xl shadow-xl bg-slate-900 text-white block cursor-pointer hover:bg-black transition-colors">
+                    사진 업로드하기
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  </label>
+                </div>
+              )}
+              {aiStep === 'loading' && (
+                <div className="text-center py-12 w-full">
+                  <div className="relative w-32 h-32 mx-auto mb-8">
+                    {selectedImage && <img src={selectedImage} alt="scanning" className="w-full h-full object-cover rounded-2xl opacity-50" />}
+                    <div className="absolute inset-0 border-t-4 border-yellow-500 animate-scan shadow-[0_-10px_15px_rgba(234,179,8,0.5)]"></div>
+                  </div>
+                  <h3 className="text-xl font-black animate-pulse">AI 이미지 분석 중...</h3>
+                  <p className="text-slate-400 text-sm mt-2">랜드마크를 추출하여 특징을 계산하고 있습니다.</p>
+                </div>
+              )}
+              {aiStep === 'result' && (
+                <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  <div className="text-center mb-6"><span className="text-4xl">💎</span><h2 className="text-2xl font-black mt-2">{activeTab === 'face' ? '황금빛 부자 관상' : '성공의 삼지창 손금'}</h2></div>
+                  <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
+                    <p>{activeTab === 'face' ? "얼굴의 '중정' 부위가 매우 조화로워 중년 이후의 재물운이 강력합니다. 특히 코끝의 기운이 둥글게 맺혀 있어 재산이 밖으로 새나가지 않는 전형적인 부자 관상입니다." : "약지 아래로 뻗은 태양선이 매우 선명합니다. 이는 대중의 인기와 금전적 성취를 동시에 거둘 수 있는 운명임을 시사합니다. 손바닥의 두툼한 기운이 행운을 담고 있습니다."}</p>
+                    <p className="text-yellow-600 font-black">✨ 분석 점수: 94점</p>
+                  </div>
+                  <button onClick={() => setAiStep('input')} className="w-full py-4 rounded-2xl font-bold text-slate-400 border border-slate-200">다시 분석하기</button>
+                </div>
+              )}
             </div>
           )}
 
-          {activeTab === 'palm' && (
-            <div className="text-center py-6 w-full flex flex-col items-center">
-              <span className="text-6xl mb-6 block">✋</span>
-              <h2 className="text-2xl font-black mb-4 text-center">손바닥 속 보물지도</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
-                <p><strong>재물선이 뚜렷하면 대박의 징조입니다.</strong> 수상학에서 손금은 뇌의 신경과 연결되어 그 사람의 에너지를 실시간으로 반영합니다.</p>
-                <p>로또 당첨자들에게서 흔히 발견되는 <strong>삼지창 손금</strong>과 재운선을 AI가 스캔하여 당신의 현재 재물운 지수를 분석해 드립니다.</p>
-              </div>
-              <div className="mt-8 inline-block px-5 py-2 bg-yellow-100 text-yellow-700 text-[11px] font-black rounded-full animate-pulse uppercase">AI Scanning Ready...</div>
-            </div>
-          )}
-          
           {activeTab === 'dream' && (
             <div className="w-full flex flex-col items-center">
               <h2 className="text-2xl font-black mb-6 text-center">로또 당첨 길몽 10선</h2>
@@ -268,20 +299,6 @@ function App() {
           <span className="opacity-50">© 2026 LUCKY GUIDE</span>
         </div>
       </footer>
-
-      {isPrivacyOpen && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-6" onClick={() => setIsPrivacyOpen(false)}>
-          <div className={`${isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-white text-slate-500'} w-full max-w-[340px] max-h-[70vh] overflow-y-auto rounded-[2rem] p-8 shadow-2xl text-left`} onClick={(e) => e.stopPropagation()}>
-            <h3 className={`text-xl font-black mb-6 border-b pb-2 ${isDarkMode ? 'text-white border-slate-700' : 'text-slate-900 border-slate-100'}`}>개인정보처리방침</h3>
-            <div className="text-[13px] leading-relaxed space-y-6 font-medium text-slate-400">
-              <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>1. 개인정보 수집 미실시</p><p>성함, 연락처 등 일체의 개인 식별 정보를 수집하거나 저장하지 않습니다.</p></section>
-              <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>2. 구글 애드센스 활용</p><p>광고 게재를 위한 구글 쿠키가 사용될 수 있음을 알려드립니다.</p></section>
-              <section><p className={`font-bold mb-2 ${isDarkMode ? 'text-yellow-400' : 'text-slate-900'}`}>3. 보안 관리</p><p>모든 데이터는 안전한 로컬 환경에서 즉시 처리됩니다.</p></section>
-            </div>
-            <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-10 py-5 bg-slate-900 text-white rounded-2xl font-bold text-sm">확인했습니다</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
