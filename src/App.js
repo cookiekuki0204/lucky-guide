@@ -40,13 +40,14 @@ function App() {
         width: cardRef.current.offsetWidth,
         height: cardRef.current.offsetHeight,
         onclone: (clonedDoc) => {
-          const clonedCard = clonedDoc.querySelector('.capture-card');
-          if (clonedCard) {
-            clonedCard.style.display = 'flex';
-            clonedCard.style.flexDirection = 'column';
-            clonedCard.style.alignItems = 'center';
-            clonedCard.style.textAlign = 'center';
-          }
+          const balls = clonedDoc.querySelectorAll('.lotto-ball');
+          balls.forEach(ball => {
+            ball.style.display = 'flex';
+            ball.style.alignItems = 'center';
+            ball.style.justifyContent = 'center';
+            ball.style.lineHeight = '1'; // 텍스트가 아래로 쏠리는 현상 방지
+            ball.style.paddingTop = '2px'; // 미세 조정 (기기별 차이 대응)
+          });
         }
       });
       const link = document.createElement('a');
