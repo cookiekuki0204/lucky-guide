@@ -5,7 +5,6 @@ function App() {
   const [activeTab, setActiveTab] = useState('lotto');
   const [numbers, setNumbers] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
-  // 사용하지 않는 isPrivacyOpen 제거
   const [isDarkMode, setIsDarkMode] = useState(false);
   const cardRef = useRef(null);
 
@@ -13,7 +12,6 @@ function App() {
   const [sajuData, setSajuData] = useState({ date: '', time: 'unknown' });
   const [sajuResult, setSajuResult] = useState(null);
   const [aiStep, setAiStep] = useState('input'); // input, loading, result
-  // 사용하지 않는 aiType 제거
   const [selectedImage, setSelectedImage] = useState(null);
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
@@ -37,7 +35,6 @@ function App() {
     }, 1000);
   };
 
-  // 공통 AI 분석 시뮬레이션
   const startAiAnalysis = () => {
     setAiStep('loading');
     setTimeout(() => {
@@ -150,15 +147,35 @@ function App() {
         <div ref={cardRef} className={`${cardClass} capture-card`}>
           {activeTab === 'lotto' && (
             <div className="flex flex-col items-center w-full">
-              <div className="text-center mb-10"><span className="text-5xl mb-4 block animate-bounce">✨</span><h2 className="text-2xl font-black">당신의 운을 믿으세요</h2><p className="text-slate-400 text-[12px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p></div>
-              <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full" style={{ display: 'flex', justifyContent: 'center' }}>
+              <div className="text-center mb-10">
+                <span className="text-5xl mb-4 block animate-bounce">✨</span>
+                <h2 className="text-2xl font-black">당신의 운을 믿으세요</h2>
+                <p className="text-slate-400 text-[12px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p>
+              </div>
+              
+              {/* 럭키볼 컨테이너: px-4 및 max-w 제한으로 카드 양 끝에 붙는 현상 방지 */}
+              <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full px-4 max-w-[320px] mx-auto" style={{ display: 'flex', justifyContent: 'center' }}>
                 {numbers.length > 0 ? numbers.map((num, i) => (
-                  <div key={i} className="lotto-ball w-12 h-12 rounded-full bg-slate-900 text-yellow-400 font-bold text-xl shadow-lg border border-yellow-500/30" style={{ display: 'table', borderCollapse: 'separate', flexShrink: 0 }}>
+                  <div 
+                    key={i} 
+                    className="lotto-ball w-11 h-11 rounded-full bg-slate-900 text-yellow-400 font-bold text-lg shadow-lg border border-yellow-500/30" 
+                    style={{ display: 'table', borderCollapse: 'separate', flexShrink: 0, minWidth: '44px' }}
+                  >
                     <span style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>{num}</span>
                   </div>
                 )) : <div className="text-slate-300 text-base font-bold tracking-widest uppercase">Ready to Luck</div>}
               </div>
-              <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
+
+              <div className="w-full flex justify-center">
+                <button 
+                  onClick={generateNumbers} 
+                  disabled={isSpinning} 
+                  style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} 
+                  className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}
+                >
+                  {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
+                </button>
+              </div>
             </div>
           )}
 
