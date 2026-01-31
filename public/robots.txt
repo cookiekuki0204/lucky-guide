@@ -1,6 +1,4 @@
-# 모든 로봇의 접근을 허용합니다.
 User-agent: *
 Allow: /
 
-# 내 사이트의 지도가 어디 있는지 로봇에게 직접 알려줍니다.
 Sitemap: https://lucky-guide.pages.dev/sitemap.xml
