@@ -1,20 +1,34 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
+import ReactGA from 'react-ga4';
+
+// 구글 애널리틱스 초기화
+ReactGA.initialize('G-0349GV858G');
 
 function App() {
   const [activeTab, setActiveTab] = useState('lotto');
   const [numbers, setNumbers] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false); // 개인정보 정책 상태
   const cardRef = useRef(null);
 
   // AI 기능용 상태값
   const [sajuData, setSajuData] = useState({ date: '', time: 'unknown' });
   const [sajuResult, setSajuResult] = useState(null);
-  const [aiStep, setAiStep] = useState('input'); // input, loading, result
+  const [aiStep, setAiStep] = useState('input');
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  // 페이지 뷰 추적
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  }, []);
+
+  const toggleDarkMode = () => {
+    const mode = !isDarkMode;
+    setIsDarkMode(mode);
+    ReactGA.event({ category: 'User', action: 'Toggle Dark Mode', label: mode ? 'Dark' : 'Light' });
+  };
 
   const AdSlot = ({ id }) => (
     <div className={`w-full max-w-[360px] my-4 p-4 text-center border border-dashed rounded-2xl ${isDarkMode ? 'border-slate-700 bg-slate-800/30' : 'border-slate-200 bg-white'}`}>
@@ -24,6 +38,7 @@ function App() {
 
   const generateNumbers = () => {
     setIsSpinning(true);
+    ReactGA.event({ category: 'Lotto', action: 'Generate Numbers' });
     setTimeout(() => {
       const newNumbers = [];
       while (newNumbers.length < 6) {
@@ -35,16 +50,10 @@ function App() {
     }, 1000);
   };
 
-  const startAiAnalysis = () => {
-    setAiStep('loading');
-    setTimeout(() => {
-      setAiStep('result');
-    }, 3000);
-  };
-
   const analyzeSaju = () => {
     if (!sajuData.date) return alert("생년월일을 선택해주세요!");
     setIsSpinning(true);
+    ReactGA.event({ category: 'AI', action: 'Analyze Saju' });
     setTimeout(() => {
       const sajuResults = [
         { title: "천복성(天福星)의 기운", desc: "타고난 재물 창고가 넓어 평생 먹을 복이 끊이지 않는 사주입니다. 특히 올해는 '편재'의 기운이 강하게 들어와 예상치 못한 횡재수가 따를 수 있습니다.", lucky: "금전운: 95%, 횡재수: 상", tip: "토요일 오후, 동쪽 방향의 판매점을 이용해보세요." },
@@ -58,26 +67,12 @@ function App() {
 
   const downloadImage = async () => {
     if (!cardRef.current) return;
+    ReactGA.event({ category: 'Share', action: 'Download Image' });
     try {
       const canvas = await html2canvas(cardRef.current, { 
         backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
         scale: 2,
         useCORS: true,
-        width: cardRef.current.offsetWidth,
-        height: cardRef.current.offsetHeight,
-        onclone: (clonedDoc) => {
-          const balls = clonedDoc.querySelectorAll('.lotto-ball');
-          balls.forEach(ball => {
-            ball.style.display = 'table';
-            const span = ball.querySelector('span');
-            if (span) {
-              span.style.display = 'table-cell';
-              span.style.verticalAlign = 'middle';
-              span.style.textAlign = 'center';
-              span.style.lineHeight = '1';
-            }
-          });
-        }
       });
       const link = document.createElement('a');
       link.download = `lucky-numbers.png`;
@@ -90,15 +85,18 @@ function App() {
     if (!window.Kakao) return;
     const kakao = window.Kakao;
     if (!kakao.isInitialized()) kakao.init('8ee405ddc4c4db04b8de8268a8317426');
+    
+    ReactGA.event({ category: 'Share', action: 'Kakao Share' });
+
     kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
         title: numbers.length > 0 ? `🍀 내 행운 번호: ${numbers.join(', ')}` : '🍀 오늘 내 운은 어떨까?',
-        description: '럭키가이드에서 행운을 확인하세요!',
+        description: 'AI가 분석한 로또 번호와 사주/관상을 확인해보세요!',
         imageUrl: 'https://lucky-guide.pages.dev/og-image.png',
         link: { mobileWebUrl: 'https://lucky-guide.pages.dev', webUrl: 'https://lucky-guide.pages.dev' },
       },
-      buttons: [{ title: '번호 받으러 가기', link: { mobileWebUrl: 'https://lucky-guide.pages.dev', webUrl: 'https://lucky-guide.pages.dev' } }],
+      buttons: [{ title: '내 행운 확인하러 가기', link: { mobileWebUrl: 'https://lucky-guide.pages.dev', webUrl: 'https://lucky-guide.pages.dev' } }],
     });
   };
 
@@ -106,7 +104,9 @@ function App() {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
-      startAiAnalysis();
+      setAiStep('loading');
+      ReactGA.event({ category: 'AI', action: `Analyze ${activeTab}` });
+      setTimeout(() => setAiStep('result'), 3000);
     }
   };
 
@@ -132,7 +132,10 @@ function App() {
               { id: 'dream', label: '꿈해몽' },
               { id: 'guide', label: '띠별운세' }
             ].map((tab) => (
-              <button key={tab.id} onClick={() => { setActiveTab(tab.id); setAiStep('input'); setSajuResult(null); setSelectedImage(null); }} className={tabClass(tab.id)}>
+              <button key={tab.id} onClick={() => { 
+                setActiveTab(tab.id); setAiStep('input'); setSajuResult(null); setSelectedImage(null);
+                ReactGA.event({ category: 'Navigation', action: 'Switch Tab', label: tab.label });
+              }} className={tabClass(tab.id)}>
                 {tab.label}
                 {activeTab === tab.id && <div className="absolute bottom-0 left-2 right-2 h-1 bg-yellow-500 rounded-full" />}
               </button>
@@ -152,30 +155,14 @@ function App() {
                 <h2 className="text-2xl font-black">당신의 운을 믿으세요</h2>
                 <p className="text-slate-400 text-[12px] mt-2 font-bold tracking-widest uppercase">Lucky Guide Premium</p>
               </div>
-              
-              {/* 럭키볼 컨테이너: px-4 및 max-w 제한으로 카드 양 끝에 붙는 현상 방지 */}
-              <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full px-4 max-w-[320px] mx-auto" style={{ display: 'flex', justifyContent: 'center' }}>
+              <div className="flex justify-center items-center gap-3 mb-12 h-14 w-full px-4 max-w-[320px] mx-auto">
                 {numbers.length > 0 ? numbers.map((num, i) => (
-                  <div 
-                    key={i} 
-                    className="lotto-ball w-11 h-11 rounded-full bg-slate-900 text-yellow-400 font-bold text-lg shadow-lg border border-yellow-500/30" 
-                    style={{ display: 'table', borderCollapse: 'separate', flexShrink: 0, minWidth: '44px' }}
-                  >
-                    <span style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>{num}</span>
+                  <div key={i} className="lotto-ball w-11 h-11 rounded-full bg-slate-900 text-yellow-400 font-bold text-lg shadow-lg border border-yellow-500/30 flex items-center justify-center" style={{ flexShrink: 0, minWidth: '44px' }}>
+                    <span>{num}</span>
                   </div>
                 )) : <div className="text-slate-300 text-base font-bold tracking-widest uppercase">Ready to Luck</div>}
               </div>
-
-              <div className="w-full flex justify-center">
-                <button 
-                  onClick={generateNumbers} 
-                  disabled={isSpinning} 
-                  style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} 
-                  className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}
-                >
-                  {isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}
-                </button>
-              </div>
+              <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite', display: 'block', width: '100%' }} className={`py-6 rounded-2xl font-black text-slate-900 text-xl shadow-xl ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
             </div>
           )}
 
@@ -190,16 +177,16 @@ function App() {
                     <input type="date" className={`w-full p-4 rounded-2xl font-bold outline-none border-2 transition-all ${isDarkMode ? 'bg-slate-800 border-slate-600 text-white' : 'bg-white border-slate-100'}`} onChange={(e) => setSajuData({...sajuData, date: e.target.value})} /></div>
                     <div className="flex flex-col text-left"><label className="text-[12px] font-bold text-slate-400 mb-2 uppercase ml-1">Birth Time</label>
                     <select className={`w-full p-4 rounded-2xl font-bold outline-none border-2 transition-all ${isDarkMode ? 'bg-slate-800 border-slate-600 text-white' : 'bg-white border-slate-100'}`} onChange={(e) => setSajuData({...sajuData, time: e.target.value})}>
-                      <option value="unknown">모름 / 선택안함</option><option value="0">자시 (23~01시)</option><option value="2">축시 (01~03시)</option><option value="4">인시 (03~05시)</option><option value="6">묘시 (05~07시)</option><option value="8">진시 (07~09시)</option><option value="10">사시 (09~11시)</option><option value="12">오시 (11~13시)</option><option value="14">미시 (13~15시)</option><option value="16">신시 (15~17시)</option><option value="18">유시 (17~19시)</option><option value="20">술시 (19~21시)</option><option value="22">해시 (21~23시)</option>
+                      <option value="unknown">모름</option><option value="0">자시</option><option value="12">오시</option>
                     </select></div>
                   </div>
-                  <button onClick={analyzeSaju} disabled={isSpinning} className={`w-full py-6 rounded-2xl font-black text-xl shadow-xl transition-all ${isSpinning ? 'bg-slate-300' : 'bg-slate-900 text-white'}`}>{isSpinning ? '운명을 분석 중...' : '사주 분석하기'}</button>
+                  <button onClick={analyzeSaju} disabled={isSpinning} className="w-full py-6 rounded-2xl font-black text-xl shadow-xl bg-slate-900 text-white">사주 분석하기</button>
                 </div>
               ) : (
                 <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
                   <div className="text-center mb-6"><span className="text-4xl">📜</span><h2 className="text-2xl font-black mt-2">{sajuResult.title}</h2></div>
                   <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
-                    <p>{sajuResult.desc}</p><p className="text-yellow-600 font-black">✨ {sajuResult.lucky}</p><p className="text-sm opacity-80 italic">💡 {sajuResult.tip}</p>
+                    <p>{sajuResult.desc}</p><p className="text-yellow-600 font-black">✨ {sajuResult.lucky}</p>
                   </div>
                   <button onClick={() => setSajuResult(null)} className="w-full py-4 rounded-2xl font-bold text-slate-400 border border-slate-200">다시 입력하기</button>
                 </div>
@@ -213,29 +200,18 @@ function App() {
                 <div className="text-center py-6 w-full">
                   <span className="text-6xl mb-6 block">{activeTab === 'face' ? '🎭' : '✋'}</span>
                   <h2 className="text-2xl font-black mb-4">{activeTab === 'face' ? '관상 분석' : '손금 분석'}</h2>
-                  <p className="text-slate-400 text-sm mb-8 leading-relaxed">사진을 업로드하면 AI가 당신의<br/>재물복과 행운을 분석합니다.</p>
-                  <label className="w-full py-6 rounded-2xl font-black text-xl shadow-xl bg-slate-900 text-white block cursor-pointer hover:bg-black transition-colors">
+                  <label className="w-full py-6 rounded-2xl font-black text-xl shadow-xl bg-slate-900 text-white block cursor-pointer">
                     사진 업로드하기
                     <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                   </label>
                 </div>
               )}
-              {aiStep === 'loading' && (
-                <div className="text-center py-12 w-full">
-                  <div className="relative w-32 h-32 mx-auto mb-8">
-                    {selectedImage && <img src={selectedImage} alt="scanning" className="w-full h-full object-cover rounded-2xl opacity-50" />}
-                    <div className="absolute inset-0 border-t-4 border-yellow-500 animate-scan shadow-[0_-10px_15px_rgba(234,179,8,0.5)]"></div>
-                  </div>
-                  <h3 className="text-xl font-black animate-pulse">AI 이미지 분석 중...</h3>
-                  <p className="text-slate-400 text-sm mt-2">랜드마크를 추출하여 특징을 계산하고 있습니다.</p>
-                </div>
-              )}
+              {aiStep === 'loading' && <div className="text-center py-12 animate-pulse font-black">AI 이미지 분석 중...</div>}
               {aiStep === 'result' && (
                 <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <div className="text-center mb-6"><span className="text-4xl">💎</span><h2 className="text-2xl font-black mt-2">{activeTab === 'face' ? '황금빛 부자 관상' : '성공의 삼지창 손금'}</h2></div>
-                  <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
-                    <p>{activeTab === 'face' ? "얼굴의 '중정' 부위가 매우 조화로워 중년 이후의 재물운이 강력합니다. 특히 코끝의 기운이 둥글게 맺혀 있어 재산이 밖으로 새나가지 않는 전형적인 부자 관상입니다." : "약지 아래로 뻗은 태양선이 매우 선명합니다. 이는 대중의 인기와 금전적 성취를 동시에 거둘 수 있는 운명임을 시사합니다. 손바닥의 두툼한 기운이 행운을 담고 있습니다."}</p>
-                    <p className="text-yellow-600 font-black">✨ 분석 점수: 94점</p>
+                  <div className="text-center mb-6"><span className="text-4xl">💎</span><h2 className="text-2xl font-black mt-2">부자 될 운명입니다</h2></div>
+                  <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium mb-6 ${isDarkMode ? 'bg-slate-700/50 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
+                    <p>분석 결과, 매우 강력한 재물운이 느껴집니다.</p>
                   </div>
                   <button onClick={() => setAiStep('input')} className="w-full py-4 rounded-2xl font-bold text-slate-400 border border-slate-200">다시 분석하기</button>
                 </div>
@@ -252,15 +228,10 @@ function App() {
                   {t: "대통령과 악수하는 꿈", d: "명예와 횡재수가 따르는 최고 길몽입니다."},
                   {t: "조상님이 밝게 웃는 꿈", d: "부를 얻게 될 조상님의 선물입니다."},
                   {t: "똥에 흠뻑 젖는 꿈", d: "막대한 재산이 굴러오는 전형적인 꿈입니다."},
-                  {t: "집이 활활 타는 꿈", d: "재산이 급격히 번창할 것을 예시합니다."},
-                  {t: "맑은 물이 집안에 가득참", d: "부귀영화를 누릴 강력한 징조입니다."},
-                  {t: "돼지 떼를 발견하는 꿈", d: "횡재수가 넝쿨째 들어오는 꿈입니다."},
-                  {t: "자신의 몸에서 피가 남", d: "선명한 피는 큰 재물운을 의미합니다."},
-                  {t: "용이 하늘로 승천함", d: "일생일대의 기회가 찾아옴을 뜻합니다."},
-                  {t: "돈다발을 선물받는 꿈", d: "실제 횡재 가능성이 매우 높습니다."}
+                  {t: "집이 활활 타는 꿈", d: "재산이 급격히 번창할 것을 예시합니다."}
                 ].map((item, i) => (
                   <div key={i} className={`p-5 rounded-2xl border-l-4 border-yellow-500 shadow-sm ${isDarkMode ? 'bg-slate-700 text-slate-200' : 'bg-slate-50 text-slate-600'}`}>
-                    <h3 className={`font-black mb-2 text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{i+1}. {item.t}</h3><p>{item.d}</p>
+                    <h3 className="font-black mb-2 text-base">{i+1}. {item.t}</h3><p>{item.d}</p>
                   </div>
                 ))}
               </div>
@@ -270,17 +241,12 @@ function App() {
           {activeTab === 'guide' && (
             <div className="w-full flex flex-col items-center">
               <h2 className="text-2xl font-black mb-6 text-center">12간지 행운 포인트</h2>
-              <div className={`p-6 rounded-3xl text-left text-[14px] leading-relaxed font-medium space-y-4 mb-6 w-full ${isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600' : 'bg-slate-50 text-slate-600 border border-slate-100'}`}>
-                <p><strong>띠별 오행의 조화:</strong> 12간지는 각기 고유한 기운을 지닙니다. 이에 따라 로또 번호의 홀짝 조합이나 특정 숫자대의 기운이 달라집니다.</p>
-              </div>
               <div className={`overflow-hidden rounded-3xl border shadow-sm w-full ${isDarkMode ? 'border-slate-700' : 'border-slate-100'}`}>
                 <table className="w-full text-[13px] text-center border-collapse font-medium">
-                  <thead className={isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-50 text-slate-400'}><tr><th className="p-4">띠 그룹</th><th className="p-4">행운 숫자</th><th className="p-4">컬러</th></tr></thead>
+                  <thead className={isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-50 text-slate-400'}><tr><th className="p-4">띠 그룹</th><th className="p-4">행운 숫자</th></tr></thead>
                   <tbody className={`divide-y ${isDarkMode ? 'divide-slate-700 text-slate-300' : 'divide-slate-50 text-slate-700'}`}>
-                    <tr><td className="p-4">쥐/용/원숭이</td><td className="p-4 font-black">1, 6, 15, 29</td><td className="p-4 text-blue-500 font-bold">BLUE</td></tr>
-                    <tr><td className="p-4">소/뱀/닭</td><td className="p-4 font-black">2, 7, 24, 38</td><td className="p-4 text-red-500 font-bold">RED</td></tr>
-                    <tr><td className="p-4">범/말/개</td><td className="p-4 font-black">3, 8, 19, 42</td><td className="p-4 text-green-600 font-bold">GREEN</td></tr>
-                    <tr><td className="p-4">토끼/양/돼지</td><td className="p-4 font-black">4, 9, 31, 45</td><td className="p-4 text-slate-400 font-bold">WHITE</td></tr>
+                    <tr><td className="p-4">쥐/용/원숭이</td><td className="p-4 font-black">1, 6, 15, 29</td></tr>
+                    <tr><td className="p-4">소/뱀/닭</td><td className="p-4 font-black">2, 7, 24, 38</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -293,26 +259,38 @@ function App() {
         {activeTab === 'lotto' && numbers.length > 0 && (
           <div className="flex justify-center gap-8 mt-12">
             <button onClick={downloadImage} className="flex flex-col items-center gap-2 group transition-all active:scale-90">
-              <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-2xl group-hover:bg-yellow-100 transition-colors shadow-sm">💾</div>
+              <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-2xl shadow-sm">💾</div>
               <span className="text-[12px] font-bold text-slate-500">이미지 저장</span>
             </button>
             <button onClick={shareKakao} className="flex flex-col items-center gap-2 group transition-all active:scale-90">
               <div className="w-14 h-14 rounded-2xl bg-[#FEE500] flex items-center justify-center text-2xl shadow-sm">💬</div>
               <span className="text-[12px] font-bold text-slate-500">카톡 공유</span>
             </button>
-            <button onClick={() => { navigator.clipboard.writeText(numbers.join(', ')); alert('복사되었습니다! 🍀'); }} className="flex flex-col items-center gap-2 group transition-all active:scale-90">
-              <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-2xl group-hover:bg-yellow-100 transition-colors shadow-sm">📋</div>
-              <span className="text-[12px] font-bold text-slate-500">번호 복사</span>
-            </button>
           </div>
         )}
       </main>
 
-      <footer className={`w-full max-w-[360px] py-20 px-6 text-center border-t mt-auto ${isDarkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-        <div className="flex justify-center gap-6 mb-4 text-[12px] font-bold text-slate-400">
-          <span className="opacity-50">© 2026 LUCKY GUIDE</span>
+      <footer className="w-full py-20 text-center border-t mt-auto text-[12px] font-bold text-slate-400">
+        <div className="flex justify-center gap-4 mb-2">
+          <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-slate-600 transition-colors underline">개인정보처리방침</button>
         </div>
+        © 2026 LUCKY GUIDE
       </footer>
+
+      {/* 개인정보처리방침 모달 */}
+      {isPrivacyOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
+          <div className={`w-full max-w-md p-8 rounded-3xl shadow-2xl overflow-y-auto max-h-[80vh] ${isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-white text-slate-800'}`}>
+            <h2 className="text-xl font-black mb-6">개인정보처리방침</h2>
+            <div className="text-[13px] leading-relaxed space-y-4 opacity-80">
+              <p>1. 본 서비스는 사용자가 업로드한 이미지를 서버에 저장하지 않으며, 분석 후 즉시 파기됩니다.</p>
+              <p>2. 구글 애널리틱스를 통해 서비스 개선을 위한 익명화된 방문 데이터를 수집합니다.</p>
+              <p>3. 사용자의 생년월일 정보는 운세 분석을 위해서만 사용되며 별도로 수집되지 않습니다.</p>
+            </div>
+            <button onClick={() => setIsPrivacyOpen(false)} className="w-full mt-8 py-4 bg-yellow-500 text-slate-900 font-black rounded-2xl">닫기</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
