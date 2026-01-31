@@ -72,9 +72,9 @@ function App() {
         <nav className={`flex backdrop-blur-md border-b overflow-x-auto md:overflow-x-visible no-scrollbar touch-pan-x ${navBg}`}>
           <div className="flex min-w-full md:min-w-0 md:w-full items-center justify-start md:justify-center px-2">
             <button onClick={() => setActiveTab('lotto')} className={tabClass('lotto')}>로또번호추첨기{activeTab === 'lotto' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
-            {/* <button onClick={() => setActiveTab('saju')} className={tabClass('saju')}>AI사주{activeTab === 'saju' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button> */}
-            {/* <button onClick={() => setActiveTab('face')} className={tabClass('face')}>AI관상{activeTab === 'face' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button> */}
-            {/* <button onClick={() => setActiveTab('palm')} className={tabClass('palm')}>AI손금{activeTab === 'palm' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button> */}
+            <button onClick={() => setActiveTab('saju')} className={tabClass('saju')}>AI사주{activeTab === 'saju' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
+            <button onClick={() => setActiveTab('face')} className={tabClass('face')}>AI관상{activeTab === 'face' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
+            <button onClick={() => setActiveTab('palm')} className={tabClass('palm')}>AI손금{activeTab === 'palm' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
             <button onClick={() => setActiveTab('dream')} className={tabClass('dream')}>대박꿈해몽{activeTab === 'dream' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
             <button onClick={() => setActiveTab('guide')} className={tabClass('guide')}>띠별운세{activeTab === 'guide' && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full" />}</button>
           </div>
@@ -96,42 +96,57 @@ function App() {
               <button onClick={generateNumbers} disabled={isSpinning} style={{ background: 'linear-gradient(45deg, #D4AF37, #F9E29B, #B8860B, #F9E29B)', backgroundSize: '400% 400%', animation: isSpinning ? 'none' : 'glimmer 3s ease infinite' }} className={`w-full py-5 rounded-2xl font-black text-slate-900 text-lg shadow-xl shadow-yellow-200/50 ${isSpinning ? 'opacity-50' : ''}`}>{isSpinning ? '기운을 모으는 중...' : '행운 번호 받기'}</button>
             </div>
           )}
-
-          {/* {activeTab === 'saju' && (
+          {activeTab === 'saju' && (
             <div className="text-center py-6">
-              <span className="text-5xl mb-6 block">🎎</span><h2 className="text-xl font-black mb-2 italic">타고난 운명, 사주풀이</h2>
-              <p className="text-slate-400 text-xs mb-8">생년월일시 데이터를 바탕으로 분석합니다</p>
-              <div className={`p-6 rounded-3xl text-left text-[11px] leading-relaxed font-medium ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
-                "사주팔자는 인생의 설계도와 같습니다." 최신 AI가 당신의 대운과 올해의 횡재수를 정밀 분석합니다.
+              <span className="text-5xl mb-6 block">🎎</span>
+              <h2 className="text-xl font-black mb-2 italic">타고난 운명, 사주풀이</h2>
+              <div className={`p-6 rounded-3xl text-left text-[12px] leading-relaxed font-medium space-y-4 ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
+                <p>
+                  <strong>"사주팔자는 인생의 설계도와 같습니다."</strong> 사주란 사람이 태어난 연(年), 월(月), 일(日), 시(時)의 네 기둥을 의미합니다. 각각의 기둥은 두 개의 글자로 이루어져 총 여덟 글자가 되는데, 이것이 바로 우리가 흔히 말하는 '사주팔자'입니다.
+                </p>
+                <p>
+                  명리학적으로 로또 당첨과 같은 횡재수는 <strong>'편재(偏財)'</strong>의 기운과 밀접한 관련이 있습니다. 정재가 정당한 노력의 대가라면, 편재는 생각지 못한 큰 재물을 뜻합니다. 럭키가이드의 AI는 당신의 사주 원국에서 편재의 힘이 강해지는 시기와 행운의 오행(나무, 불, 흙, 금, 물)을 분석합니다.
+                </p>
+                <p>
+                  예를 들어, 자신의 기운이 강한 '신강(身强)' 사주에 재물운이 들어오는 세운(Yearly Luck)이 겹칠 때 대박의 기운이 가장 강해집니다. 현재 AI 사주 엔진은 수천 명의 당첨자 사주 데이터를 학습하고 있으며, 곧 당신의 생년월일시만으로 정확한 행운의 타이밍을 짚어드릴 예정입니다.
+                </p>
               </div>
-              <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Coming Soon</div>
+              <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">AI Engine Updating...</div>
             </div>
-          )} */}
-
-          {/* AI 관상 복구
+          )}              
+          // App.js 내 관상 탭 부분
           {activeTab === 'face' && (
             <div className="text-center py-6">
-              <span className="text-5xl mb-6 block">🎭</span><h2 className="text-xl font-black mb-2 italic">"재벌이 될 상인가?"</h2>
-              <p className="text-slate-400 text-xs mb-8">AI 얼굴 인식으로 찾는 재물복</p>
-              <div className={`p-6 rounded-3xl text-left text-[11px] leading-relaxed font-medium ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
-                "코는 재물 창고라 하였습니다." 최신 인식 기술로 당신의 성공운을 분석해 드립니다.
+              <span className="text-5xl mb-6 block">🎭</span>
+              <h2 className="text-xl font-black mb-2 italic">"재벌이 될 상인가?"</h2>
+              <div className={`p-6 rounded-3xl text-left text-[12px] leading-relaxed font-medium ${isDarkMode ? 'bg-slate-700/50 text-slate-300' : 'bg-slate-50 text-slate-500'}`}>
+                <p className="mb-4">"코는 재물 창고라 하였습니다." 관상학에서 재물운을 볼 때 가장 중요하게 여기는 부위는 '중정'인 코와 '하정'인 입과 턱입니다. 코 끝이 둥글고 콧구멍이 보이지 않는 관상은 재산이 잘 쌓이는 관상으로 알려져 있습니다.</p>
+                <p className="mb-4">럭키가이드 AI 관상 서비스는 얼굴의 68개 랜드마크를 추출하여, 전통 관상학에서 말하는 '오관'의 조화를 분석합니다. 당신의 눈빛에서 느껴지는 기운과 이마의 넓이가 상징하는 초년운, 중년운을 확인해 보세요.</p>
+                <p>현재 AI 엔진 최적화 작업 중이며, 곧 당신의 사진 한 장으로 재물복을 점칠 수 있는 정식 서비스가 시작됩니다!</p>
               </div>
-              <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Coming Soon</div>
+              <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Content Updating...</div>
             </div>
-          )} */}
+          )}
 
-          {/* AI 손금 복구
           {activeTab === 'palm' && (
             <div className="text-center py-6">
-              <span className="text-5xl mb-6 block">✋</span><h2 className="text-xl font-black mb-2 italic">"손바닥 보물지도"</h2>
-              <p className="text-slate-400 text-xs mb-8">손바닥에 그려진 당첨의 기운</p>
-              <div className={`p-6 rounded-3xl text-left text-[11px] leading-relaxed font-medium ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
-                "재물선이 뚜렷하니 대박의 징조로다." 손금의 주요 선을 AI로 분석하여 횡재수를 찾아냅니다.
+              <span className="text-5xl mb-6 block">✋</span>
+              <h2 className="text-xl font-black mb-2 italic">"손바닥 속 보물지도"</h2>
+              <div className={`p-6 rounded-3xl text-left text-[12px] leading-relaxed font-medium space-y-4 ${isDarkMode ? 'bg-slate-700/50 text-slate-300 border border-slate-600' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
+                <p>
+                  <strong>"재물선이 뚜렷하니 대박의 징조로다."</strong> 수상학(손금)에서 손바닥의 선들은 뇌의 신경과 연결되어 그 사람의 성향과 운명을 실시간으로 반영한다고 봅니다. 특히 재물과 관련된 선은 약지 아래로 뻗은 '태양선'과 새끼손가락 아래의 '재운선'입니다.
+                </p>
+                <p>
+                  로또 당첨자들에게서 자주 발견되는 <strong>'삼지창 손금'</strong>은 감정선 위로 재운선, 태양선, 운명선이 세 줄기 창처럼 뻗어 나가는 모양을 말합니다. 또한, 생명선에서 시작해 중지로 뻗은 선이 뚜렷하다면 본인의 노력과 운이 합쳐져 큰 자산가로 성장할 가능성이 매우 높습니다.
+                </p>
+                <p>
+                  럭키가이드 AI 손금 분석은 카메라로 촬영된 손바닥 이미지를 스캔하여 미세한 잔금까지 분석합니다. 손바닥의 두툼한 '언덕(丘)'들이 상징하는 에너지와 선들의 굵기, 끊김을 정밀하게 계산하여 당신의 현재 재물운 지수를 수치화해 드립니다. 곧 손바닥 촬영 기능이 활성화될 예정이니 조금만 기다려 주세요!
+                </p>
               </div>
-              <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">Coming Soon</div>
+              <div className="mt-8 inline-block px-4 py-2 bg-yellow-100 text-yellow-700 text-[10px] font-black rounded-full animate-pulse uppercase">AI Scanning Ready...</div>
             </div>
-          )} */}
-
+          )}
+          
           {activeTab === 'dream' && (
             <div>
               <h2 className="text-xl font-black mb-8 text-center italic">로또 당첨 길몽 10선</h2>
